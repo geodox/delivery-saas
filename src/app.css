@@ -4,6 +4,8 @@
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
+@source not "../.jj";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {

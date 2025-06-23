@@ -1,120 +1,12 @@
 <!-- src/routes/+page.svelte -->
 <script lang="ts">
+  import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
-  import { 
-    Package, 
-    MapPin, 
-    Users, 
-    Bell, 
-    BarChart3, 
-    Zap,
-    Check,
-    ArrowRight,
-    Menu
-  } from "lucide-svelte";
-  import ThemeToggle from "$lib/components/ThemeToggle.svelte";
+  import { Check, ArrowRight } from "lucide-svelte";
 
-  const features = [
-    {
-      icon: Package,
-      title: "Order Management",
-      description: "Easily create, track, and manage delivery orders through our intuitive dashboard."
-    },
-    {
-      icon: MapPin,
-      title: "Real-time Tracking",
-      description: "Track your delivery fleet in real-time and optimize routes for maximum efficiency."
-    },
-    {
-      icon: Users,
-      title: "Driver Management",
-      description: "Manage your drivers, track performance, and optimize assignments."
-    },
-    {
-      icon: Bell,
-      title: "Customer Notifications",
-      description: "Keep customers informed with automated SMS and email notifications about their deliveries."
-    },
-    {
-      icon: BarChart3,
-      title: "Analytics & Reporting",
-      description: "Gain insights into your delivery operations with powerful analytics and reporting tools."
-    },
-    {
-      icon: Zap,
-      title: "Integration Capabilities",
-      description: "Seamlessly integrate with your existing e-commerce platforms and tools."
-    }
-  ];
-
-  const steps = [
-    {
-      number: "1",
-      title: "Create Orders",
-      description: "Easily create delivery orders through our dashboard or automatically import them from your e-commerce platform."
-    },
-    {
-      number: "2",
-      title: "Assign & Track",
-      description: "Assign orders to drivers and track deliveries in real-time with our powerful mapping and GPS tools."
-    },
-    {
-      number: "3",
-      title: "Deliver & Analyze",
-      description: "Complete deliveries with proof of delivery and gain insights from comprehensive analytics and reporting."
-    }
-  ];
-
-  const pricingPlans = [
-    {
-      name: "Starter",
-      price: "$29",
-      period: "/month",
-      description: "Perfect for small businesses just getting started with delivery.",
-      features: [
-        "Up to 5 drivers",
-        "200 deliveries/month",
-        "Basic analytics",
-        "Email notifications"
-      ],
-      buttonText: "Get Started",
-      popular: false
-    },
-    {
-      name: "Professional",
-      price: "$99",
-      period: "/month",
-      description: "For growing businesses with moderate delivery volumes.",
-      features: [
-        "Up to 15 drivers",
-        "500 deliveries/month",
-        "Advanced analytics",
-        "SMS & email notifications"
-      ],
-      buttonText: "Get Started",
-      popular: true
-    },
-    {
-      name: "Enterprise",
-      price: "$249",
-      period: "/month",
-      description: "For businesses with high-delivery volumes and custom needs.",
-      features: [
-        "Unlimited drivers",
-        "2000+ deliveries/month",
-        "Custom analytics & reports",
-        "API access",
-        "White-label customer tracking",
-        "Priority support"
-      ],
-      buttonText: "Contact sales",
-      popular: false
-    }
-  ];
-
-  const companies = ["Company 1", "Company 2", "Company 3", "Company 4", "Company 5"];
+  import { companies, features, steps, pricingPlans } from "$lib/placeholder_data";
 </script>
 
 <svelte:head>
@@ -122,34 +14,11 @@
 </svelte:head>
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
-  <!-- Header -->
-  <header class="border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50 transition-all duration-300">
-    <div class="container mx-auto px-4 py-4">
-      <nav class="flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <div class="w-8 h-8 bg-blue-600 dark:bg-purple-600 rounded-full flex items-center justify-center transition-colors duration-300">
-            <Package class="w-4 h-4 text-white" />
-          </div>
-          <span class="text-xl font-bold text-gray-900 dark:text-white transition-colors duration-300">DeliveryManager</span>
-        </div>
-        
-        <div class="hidden md:flex items-center space-x-8">
-          <a href="#features" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a>
-          <a href="#pricing" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">How it works</a>
-          <a href="#pricing" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a>
-        </div>
-
-        <div class="flex items-center space-x-4">
-          <ThemeToggle />
-          <Button variant="ghost" class="hidden md:inline-flex">Log in</Button>
-          <Button class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300">Get Started</Button>
-          <Button variant="ghost" size="sm" class="md:hidden">
-            <Menu class="w-4 h-4" />
-          </Button>
-        </div>
-      </nav>
-    </div>
-  </header>
+  <HeaderNav>
+    <a href="#features" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Features</a>
+    <a href="#how-it-works" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">How it works</a>
+    <a href="#pricing" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Pricing</a>
+  </HeaderNav>
 
   <!-- Hero Section -->
   <section class="py-20 lg:py-32">
@@ -256,7 +125,7 @@
   </section>
 
   <!-- How It Works Section -->
-  <section class="py-20 bg-gray-50 dark:bg-slate-800/50 transition-colors duration-300">
+  <section id="how-it-works" class="py-20 bg-gray-50 dark:bg-slate-800/50 transition-colors duration-300">
     <div class="container mx-auto px-4">
       <div class="text-center space-y-4 mb-16">
         <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white transition-colors duration-300">How It Works</h2>
@@ -364,60 +233,5 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="bg-gray-900 dark:bg-slate-950 text-gray-300 py-16 transition-colors duration-300">
-    <div class="container mx-auto px-4">
-      <div class="grid md:grid-cols-4 gap-8">
-        <div class="space-y-4">
-          <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 bg-blue-600 dark:bg-purple-600 rounded-full flex items-center justify-center transition-colors duration-300">
-              <Package class="w-4 h-4 text-white" />
-            </div>
-            <span class="text-xl font-bold text-white">DeliveryManager</span>
-          </div>
-          <p class="text-gray-400 dark:text-gray-500 transition-colors duration-300">
-            The complete delivery management platform for modern businesses.
-          </p>
-        </div>
-
-        <div class="space-y-4">
-          <h4 class="text-white font-semibold">Product</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">Features</a></li>
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">Pricing</a></li>
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">Integrations</a></li>
-          </ul>
-        </div>
-
-        <div class="space-y-4">
-          <h4 class="text-white font-semibold">Resources</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">Documentation</a></li>
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">Blog</a></li>
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">Support</a></li>
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">API Reference</a></li>
-          </ul>
-        </div>
-
-        <div class="space-y-4">
-          <h4 class="text-white font-semibold">Company</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">About</a></li>
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">Careers</a></li>
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">Contact</a></li>
-            <li><a href="#" class="hover:text-white dark:hover:text-purple-300 transition-colors">Privacy Policy</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="border-t border-gray-800 dark:border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center transition-colors duration-300">
-        <p class="text-gray-400 dark:text-gray-500 transition-colors duration-300">© 2025 DeliveryManager. All rights reserved.</p>
-        <div class="flex space-x-6 mt-4 md:mt-0">
-          <a href="#" class="text-gray-400 hover:text-white dark:hover:text-purple-300 transition-colors">Twitter</a>
-          <a href="#" class="text-gray-400 hover:text-white dark:hover:text-purple-300 transition-colors">LinkedIn</a>
-          <a href="#" class="text-gray-400 hover:text-white dark:hover:text-purple-300 transition-colors">Facebook</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <Footer />
 </div>
