@@ -1,3 +1,4 @@
+# node
 node_modules
 
 # Output
@@ -24,3 +25,7 @@ vite.config.ts.timestamp-*
 
 # jj
 /.jj
+
+# Local
+PRD.md
+notes
