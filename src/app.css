@@ -1,3 +1,259 @@
-@import 'tailwindcss';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-10: hsl(var(--primary) / 0.1);
+  --color-primary-20: hsl(var(--primary) / 0.2);
+  --color-primary-5: hsl(var(--primary) / 0.05);
+  --color-primary-80: hsl(var(--primary) / 0.8);
+  --color-primary-90: hsl(var(--primary) / 0.9);
+  
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-10: hsl(var(--secondary) / 0.1);
+  --color-secondary-20: hsl(var(--secondary) / 0.2);
+  --color-secondary-5: hsl(var(--secondary) / 0.05);
+  --color-secondary-80: hsl(var(--secondary) / 0.8);
+  
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-80: hsl(var(--destructive) / 0.8);
+  --color-destructive-90: hsl(var(--destructive) / 0.9);
+  
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-30: hsl(var(--muted) / 0.3);
+  --color-muted-50: hsl(var(--muted) / 0.5);
+  --color-muted-40: hsl(var(--muted) / 0.4);
+  
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-50: hsl(var(--accent) / 0.5);
+  
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  
+  --color-sidebar-background: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-2px: 2px;
+  --radius-inherit: inherit;
+  --radius-xl: 0.75rem;
+
+  --font-family-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+
+  --spacing-1px: 1px;
+  --spacing-2px: 2px;
+  --spacing-10px: 10px;
+  --spacing-150px: 150px;
+  --spacing-250px: 250px;
+  --spacing-300px: 300px;
+  --spacing-400px: 400px;
+  --spacing-500px: 500px;
+  --spacing-180px: 180px;
+  --spacing-420px: 420px;
+  --spacing-425px: 425px;
+  --spacing-625px: 625px;
+
+  --line-height-1: 1;
+  --line-height-1_25: 1.25;
+  --line-height-1_625: 1.625;
+
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-widest: 0.1em;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-mapboxgl-spin: mapboxgl-spin 2s linear infinite;
+  --animate-mapboxgl-user-location-dot-pulse: mapboxgl-user-location-dot-pulse 2s infinite;
+  --animate-pulse-slow: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom keyframes */
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+@keyframes mapboxgl-spin {
+  0% { transform: rotate(0); }
+  to { transform: rotate(1turn); }
+}
+
+@keyframes mapboxgl-user-location-dot-pulse {
+  0% { opacity: 1; transform: scale(1); }
+  70% { opacity: 0; transform: scale(3); }
+  to { opacity: 0; transform: scale(1); }
+}
+
+@keyframes pulse-slow {
+  0%, to { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* --- Shadcn-Svelte Theme Variables --- */
+:root {
+  --background: 210 40% 98%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 196 80% 39%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 187 75% 40%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 190 95% 39%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+
+  /* Custom sidebar theme variables */
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 222.2 84% 4.9%;
+  --sidebar-primary: 196 80% 39%;
+  --sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-accent: 210 40% 96.1%;
+  --sidebar-accent-foreground: 222.2 84% 4.9%;
+  --sidebar-border: 214.3 31.8% 91.4%;
+  --sidebar-ring: 222.2 84% 4.9%;
+}
+
+/* Modern Dark Theme with Purple/Violet Accents */
+.dark {
+  /* Main background - Deep purple-tinted dark */
+  --background: 240 10% 8%;
+  --foreground: 240 5% 96%;
+  
+  /* Cards with subtle purple tint */
+  --card: 240 8% 12%;
+  --card-foreground: 240 5% 94%;
+  
+  /* Popovers slightly lighter than cards */
+  --popover: 240 8% 14%;
+  --popover-foreground: 240 5% 94%;
+  
+  /* Vibrant purple primary */
+  --primary: 262 83% 58%;
+  --primary-foreground: 240 5% 96%;
+  
+  /* Teal secondary for contrast */
+  --secondary: 180 65% 45%;
+  --secondary-foreground: 240 10% 8%;
+  
+  /* Muted areas with warm undertones */
+  --muted: 240 6% 18%;
+  --muted-foreground: 240 4% 65%;
+  
+  /* Bright cyan accent */
+  --accent: 195 100% 65%;
+  --accent-foreground: 240 10% 8%;
+  
+  /* Warm red destructive */
+  --destructive: 0 75% 60%;
+  --destructive-foreground: 240 5% 96%;
+  
+  /* Subtle borders */
+  --border: 240 6% 22%;
+  --input: 240 6% 20%;
+  
+  /* Purple ring focus */
+  --ring: 262 83% 58%;
+
+  /* Sidebar with deeper purple theme */
+  --sidebar-background: 240 12% 6%;
+  --sidebar-foreground: 240 5% 92%;
+  --sidebar-primary: 262 83% 58%;
+  --sidebar-primary-foreground: 240 5% 96%;
+  --sidebar-accent: 240 8% 16%;
+  --sidebar-accent-foreground: 240 5% 90%;
+  --sidebar-border: 240 8% 18%;
+  --sidebar-ring: 262 83% 58%;
+}
+
+/* Enhanced dark mode specific styles */
+.dark {
+  /* Add subtle texture to the background */
+  background-image: 
+    radial-gradient(circle at 25% 25%, hsl(262 83% 58% / 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, hsl(195 100% 65% / 0.03) 0%, transparent 50%);
+}
+
+/* Improved scrollbar for dark mode */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: hsl(240 8% 12%);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(240 6% 22%);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: hsl(240 6% 28%);
+}
+
+/* Enhanced selection colors for dark mode */
+.dark ::selection {
+  background: hsl(262 83% 58% / 0.3);
+  color: hsl(240 5% 96%);
+}
+
+/* Improved focus styles for dark mode */
+.dark *:focus-visible {
+  outline: 2px solid hsl(262 83% 58%);
+  outline-offset: 2px;
+}
+
+/* Base styles */
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
