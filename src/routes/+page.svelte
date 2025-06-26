@@ -1,4 +1,3 @@
-<!-- src/routes/+page.svelte -->
 <script lang="ts">
   import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
