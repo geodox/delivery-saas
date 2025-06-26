@@ -1,12 +1,17 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
+  import { page } from "$app/state";
+
   import { Menu, Package, X } from "lucide-svelte";
   import { ThemeToggle } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
-  import type { Snippet } from "svelte";
+  import { signOut } from "@auth/sveltekit/client";
 
   let { children, showLogin = true, showGetStarted = true }: { children?: Snippet, showLogin?: boolean, showGetStarted?: boolean } = $props();
 
   let mobileMenuOpen = $state(false);
+
+  $inspect(page);
 </script>
 
 <header class="border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50 transition-all duration-300">
@@ -28,11 +33,24 @@
 
       <div class="flex items-center space-x-4">
         <ThemeToggle />
-        {#if showLogin}
-        <Button variant="ghost" class="hidden md:inline-flex"><a href="/login">Log in</a></Button>
-        {/if}
-        {#if showGetStarted}
-        <Button class="hidden md:inline-flex bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"><a href="/register">Get Started</a></Button>
+        {#if page.data && page.data.session?.user}
+        <div class="flex items-center space-x-2">
+          <img
+            src={page.data.session?.user?.image ?? "/default-avatar.png"}
+            alt="Profile"
+            class="w-8 h-8 rounded-full border-2 border-blue-600 dark:border-purple-600 object-cover"
+            referrerpolicy="no-referrer"
+          />
+          <span class="hidden md:inline text-gray-900 dark:text-white font-medium">{page.data.session.user.name ?? "Profile"}</span>
+          <Button onclick={() => {signOut()}}>Log out</Button>
+        </div>
+        {:else}
+          {#if showLogin}
+          <Button variant="ghost" class="hidden md:inline-flex"><a href="/login">Log in</a></Button>
+          {/if}
+          {#if showGetStarted}
+          <Button class="hidden md:inline-flex bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"><a href="/register">Get Started</a></Button>
+          {/if}
         {/if}
         <Button 
         variant="ghost" 
