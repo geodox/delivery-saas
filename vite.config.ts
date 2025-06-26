@@ -35,7 +35,8 @@ export default defineConfig({
           'node:buffer',
           'node:http',
           'node:https',
-          'node:os'
+          'node:os',
+          '.jj'
         ]
       },
     },

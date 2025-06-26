@@ -8,6 +8,8 @@ import {
     Truck,
     CheckCircle,
     DollarSign,
+    Clock,
+    Star,
   } from "lucide-svelte";
 
 const features = [
@@ -439,6 +441,222 @@ const vehicleTypes = [
   "Van"
 ];
 
+const liveDeliveries = [
+  {
+    id: "#ORD-001",
+    driver: "Alex Rodriguez",
+    customer: "John Smith",
+    address: "123 Main St, Downtown",
+    phone: "+1 (555) 123-4567",
+    status: "in-transit",
+    estimatedTime: "15 min",
+    progress: 75,
+    lastUpdate: "2 min ago",
+    coordinates: { lat: 40.7128, lng: -74.0060 }
+  },
+  {
+    id: "#ORD-002",
+    driver: "Maria Garcia",
+    customer: "Sarah Johnson",
+    address: "456 Oak Ave, Midtown",
+    phone: "+1 (555) 234-5678",
+    status: "approaching",
+    estimatedTime: "5 min",
+    progress: 90,
+    lastUpdate: "1 min ago",
+    coordinates: { lat: 40.7589, lng: -73.9851 }
+  },
+  {
+    id: "#ORD-003",
+    driver: "James Wilson",
+    customer: "Mike Wilson",
+    address: "789 Pine Rd, Uptown",
+    phone: "+1 (555) 345-6789",
+    status: "picked-up",
+    estimatedTime: "25 min",
+    progress: 25,
+    lastUpdate: "5 min ago",
+    coordinates: { lat: 40.7831, lng: -73.9712 }
+  },
+  {
+    id: "#ORD-004",
+    driver: "Lisa Chen",
+    customer: "Emma Davis",
+    address: "321 Elm St, Westside",
+    phone: "+1 (555) 456-7890",
+    status: "delivered",
+    estimatedTime: "Completed",
+    progress: 100,
+    lastUpdate: "10 min ago",
+    coordinates: { lat: 40.7282, lng: -74.0776 }
+  }
+];
+
+const driverLocations = [
+  {
+    name: "Alex Rodriguez",
+    status: "delivering",
+    location: "Downtown",
+    orders: 2,
+    coordinates: { lat: 40.7128, lng: -74.0060 }
+  },
+  {
+    name: "Maria Garcia",
+    status: "delivering",
+    location: "Midtown",
+    orders: 1,
+    coordinates: { lat: 40.7589, lng: -73.9851 }
+  },
+  {
+    name: "James Wilson",
+    status: "delivering",
+    location: "Uptown",
+    orders: 3,
+    coordinates: { lat: 40.7831, lng: -73.9712 }
+  },
+  {
+    name: "Lisa Chen",
+    status: "available",
+    location: "Westside",
+    orders: 0,
+    coordinates: { lat: 40.7282, lng: -74.0776 }
+  }
+];
+
+const kpiMetrics = [
+  {
+    title: "Total Revenue",
+    value: "$45,231",
+    change: "+12.5%",
+    trend: "up",
+    period: "vs last week",
+    icon: DollarSign
+  },
+  {
+    title: "Total Orders",
+    value: "1,247",
+    change: "+8.2%",
+    trend: "up",
+    period: "vs last week",
+    icon: Package
+  },
+  {
+    title: "Avg Delivery Time",
+    value: "28 min",
+    change: "-5.1%",
+    trend: "up",
+    period: "vs last week",
+    icon: Clock
+  },
+  {
+    title: "Customer Rating",
+    value: "4.8",
+    change: "+0.2",
+    trend: "up",
+    period: "vs last week",
+    icon: Star
+  }
+];
+
+const performanceData = [
+  { day: "Mon", orders: 45, revenue: 1250, avgTime: 32 },
+  { day: "Tue", orders: 52, revenue: 1450, avgTime: 28 },
+  { day: "Wed", orders: 38, revenue: 1100, avgTime: 35 },
+  { day: "Thu", orders: 61, revenue: 1680, avgTime: 25 },
+  { day: "Fri", orders: 58, revenue: 1590, avgTime: 30 },
+  { day: "Sat", orders: 72, revenue: 2100, avgTime: 22 },
+  { day: "Sun", orders: 49, revenue: 1380, avgTime: 29 }
+];
+
+const topDrivers = [
+  {
+    name: "Alex Rodriguez",
+    deliveries: 156,
+    rating: 4.9,
+    onTime: 98,
+    revenue: "$4,250"
+  },
+  {
+    name: "Maria Garcia",
+    deliveries: 142,
+    rating: 4.8,
+    onTime: 95,
+    revenue: "$3,890"
+  },
+  {
+    name: "James Wilson",
+    deliveries: 138,
+    rating: 4.7,
+    onTime: 92,
+    revenue: "$3,720"
+  },
+  {
+    name: "Lisa Chen",
+    deliveries: 134,
+    rating: 4.9,
+    onTime: 96,
+    revenue: "$3,650"
+  }
+];
+
+const deliveryZones = [
+  {
+    zone: "Downtown",
+    orders: 342,
+    percentage: 35,
+    avgTime: "25 min",
+    revenue: "$12,450"
+  },
+  {
+    zone: "Midtown",
+    orders: 298,
+    percentage: 30,
+    avgTime: "28 min",
+    revenue: "$10,890"
+  },
+  {
+    zone: "Uptown",
+    orders: 186,
+    percentage: 19,
+    avgTime: "32 min",
+    revenue: "$7,230"
+  },
+  {
+    zone: "Westside",
+    orders: 156,
+    percentage: 16,
+    avgTime: "35 min",
+    revenue: "$5,680"
+  }
+];
+
+const customerInsights = [
+  {
+    metric: "New Customers",
+    value: "234",
+    change: "+18.5%",
+    trend: "up"
+  },
+  {
+    metric: "Repeat Orders",
+    value: "68%",
+    change: "+5.2%",
+    trend: "up"
+  },
+  {
+    metric: "Avg Order Value",
+    value: "$36.25",
+    change: "-2.1%",
+    trend: "down"
+  },
+  {
+    metric: "Customer Retention",
+    value: "84%",
+    change: "+3.8%",
+    trend: "up"
+  }
+];
+
 export {
   features,
   steps,
@@ -450,5 +668,12 @@ export {
   orders,
   drivers,
   statusOptions,
-  vehicleTypes
+  vehicleTypes,
+  liveDeliveries,
+  driverLocations,
+  kpiMetrics,
+  performanceData,
+  topDrivers,
+  deliveryZones,
+  customerInsights
 }
