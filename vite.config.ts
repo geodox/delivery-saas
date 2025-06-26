@@ -10,7 +10,6 @@ export default defineConfig({
 		devtoolsJson()
 	],
 	server: {
-      open: true,
       host: true,
     },
     build: {

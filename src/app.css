@@ -259,3 +259,8 @@ body {
 * {
   border-color: hsl(var(--border));
 }
+
+/* Auth.js styles */
+.signInButton button {
+  @apply w-full h-full;
+}
