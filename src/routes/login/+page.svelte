@@ -137,9 +137,9 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <!-- This may be useful in the future: grid-cols-2 -->
+            <div class="grid gap-3"> 
               <Button
-                slot="submitButton"
                 variant="outline"
                 class="w-full border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
                 onclick={() => signIn("google", { redirectTo: "/dashboard" })}
@@ -155,7 +155,6 @@
             
               <!-- FIXME: Meta's new Dev App Dashboard sucks ass. Fuck this. -->
               <!-- <Button
-                slot="submitButton"
                 variant="outline"
                 class="w-full border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
                 onclick={() => signIn("facebook", { redirectTo: "/dashboard" })}
