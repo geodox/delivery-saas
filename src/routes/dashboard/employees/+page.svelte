@@ -26,7 +26,7 @@
   } from "lucide-svelte";
 
   import { drivers, statusOptions, vehicleTypes } from "$lib/placeholder_data";
-  import type { Employee } from "$lib/data/types";
+  import type { Employee } from "$lib/placeholder_types";
 
   let searchQuery = $state("");
   let selectedStatus = $state("all");

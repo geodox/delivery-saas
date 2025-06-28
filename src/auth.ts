@@ -11,18 +11,27 @@ declare module "@auth/sveltekit" {
   interface Session {
     user: {
       userId: string,
+      name: string,
       image: string,
-      /**
-       * By default, TypeScript merges new interface properties and overwrites existing ones.
-       * In this case, the default session user properties will be overwritten,
-       * with the new ones defined above. To keep the default session user properties,
-       * you need to add them back into the newly declared interface.
-       */
-    } & DefaultSession["user"]
+      email: string,
+      emailVerified: Date | null
+    } & DefaultSession["user"],
   }
 }
  
 export const { handle, signIn, signOut } = SvelteKitAuth({
+  callbacks: {
+    session: async ({ session, user }) => {
+      if (session.user) {
+        session.user.userId = user.id;
+        session.user.name = user.name || "";
+        session.user.image = user.image || "";
+        session.user.email = user.email || "";
+        session.user.emailVerified = user.emailVerified || null;
+      }
+      return session;
+    }
+  },
   providers: [
     Google({
       clientId: env.GOOGLE_CLIENT_ID,

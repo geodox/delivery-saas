@@ -12,7 +12,7 @@ import {
     Star,
   } from "lucide-svelte";
 
-  import type { Feature, Step, PricingPlan, Stat, RecentOrder, ActiveDriver, Order, Employee, StatusOption, LiveDelivery, DriverLocation, KPIMetric, PerformanceData, TopDriver, DeliveryZone, CustomerInsight } from "$lib/data/types";
+  import type { Feature, Step, PricingPlan, Stat, RecentOrder, ActiveDriver, Order, Employee, StatusOption, LiveDelivery, DriverLocation, KPIMetric, PerformanceData, TopDriver, DeliveryZone, CustomerInsight } from "$lib/placeholder_types";
 
 const features: Feature[] = [
   {

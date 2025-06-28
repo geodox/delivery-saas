@@ -1,6 +1,7 @@
-import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
+import { fail, redirect } from '@sveltejs/kit';
 import { clientPromise } from '$lib/surrealdb';
+import { Business, Employee } from '$lib/models';
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
@@ -9,73 +10,78 @@ export const actions: Actions = {
       const db = await clientPromise;
       const session = await locals.auth();
 
-      // Extract form data
-      const businessData = {
-        businessName: formData.get('businessName') as string,
-        description: formData.get('description') as string,
-        website: formData.get('website') as string,
-        phone: formData.get('phone') as string,
-        address: {
-          street: formData.get('streetAddress') as string,
-          city: formData.get('city') as string,
-          stateProvince: formData.get('stateProvince') as string,
-          zipPostalCode: formData.get('zipPostalCode') as string,
-          country: formData.get('country') as string
-        },
-        delivery: {
-          radius: parseInt(formData.get('deliveryRadius') as string),
-          radiusUnit: formData.get('country') === 'Canada' ? 'km' : 'miles',
-          estimatedOrderVolume: formData.get('estimatedOrderVolume') as string,
-          specialRequirements: formData.get('specialRequirements') as string
-        },
-        operatingHours: JSON.parse(formData.get('operatingHours') as string),
-        userId: session?.user?.userId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
+      // Create business instance from form data
+      const business = Business.fromFormData(formData);
 
-      // Validate required fields
-      if (!businessData.businessName || !businessData.description) {
+      // Validate business data
+      const validation = business.validate();
+      if (!validation.isValid) {
         return fail(400, { 
-          error: 'Missing required business information',
-          data: businessData 
+          error: 'Validation failed',
+          details: validation.errors,
+          data: business.toJSON()
         });
       }
 
-      if (!businessData.address.street || !businessData.address.city || !businessData.address.zipPostalCode) {
-        return fail(400, { 
-          error: 'Missing required address information',
-          data: businessData 
-        });
-      }
+      // Create business profile
+      const businessResult = await db.query(`
+        CREATE business SET 
+          name = $name,
+          description = $description,
+          website = $website,
+          phone = $phone,
+          address = $address,
+          delivery = $delivery,
+          operatingHours = $operatingHours,
+          ownerId = type::thing('user', $ownerId),
+          createdAt = time::now(),
+          updatedAt = time::now()
+      `, { 
+        ...business.toJSON(),
+        ownerId: session?.user?.userId
+      }) as any[];
 
-      // Create business profile in SurrealDB
-      const [business] = await db.create('business', businessData);
-
-      if (!business) {
+      const businessRecord = businessResult[0]?.[0];
+      if (!businessRecord || !businessRecord.id) {
         return fail(500, { 
           error: 'Failed to create business profile',
-          data: businessData 
+          data: business.toJSON()
         });
       }
 
-      // Create employee record linking user to business
+      // Create employee record
       if (session?.user?.userId) {
-        await db.create('employees', {
+        const employee = new Employee({
           userId: session.user.userId,
-          businessId: business.id,
+          businessId: businessRecord.id,
           role: 'owner',
-          status: 'active',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          status: 'active'
         });
+
+        const employeeValidation = employee.validate();
+        if (!employeeValidation.isValid) {
+          return fail(500, { 
+            error: 'Failed to create employee record',
+            details: employeeValidation.errors
+          });
+        }
+
+        await db.query(`
+          CREATE employees SET 
+            userId = type::thing('user', $userId),
+            businessId = $businessId,
+            role = $role,
+            status = $status,
+            createdAt = time::now(),
+            updatedAt = time::now()
+        `, employee.toJSON());
       }
 
     } catch (error) {
       console.error('Business setup error:', error);
       
       if (error instanceof Response) {
-        throw error; // Re-throw redirects
+        throw error;
       }
 
       return fail(500, { 
@@ -84,6 +90,6 @@ export const actions: Actions = {
       });
     }
 
-    redirect(303, '/dashboard');
+    throw redirect(303, '/dashboard');
   }
-}; 
+};

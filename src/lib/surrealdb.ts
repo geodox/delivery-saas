@@ -1,6 +1,8 @@
 import { type Surreal } from "surrealdb"
 import { MySurreal, toAnyAuth } from "$lib/surrealdb_utils";
- 
+
+// TODO: Use database auth instead of root auth
+// https://surrealdb.com/docs/surrealdb/security/authentication#record-users
 export const clientPromise = new Promise<Surreal>(async (resolve, reject) => {
   try {
     const {

@@ -5,17 +5,17 @@
   import { Button } from "$lib/components/ui/button";
   import { 
     Package,
-    MapPin,
     Clock,
     CheckCircle,
     AlertCircle,
     Users,
-    Activity,
     ArrowUpRight,
     ArrowDownRight,
   } from "lucide-svelte";
   
   import { stats, recentOrders, activeDrivers } from "$lib/placeholder_data";
+
+  let { data } = $props();
 
   function getStatusColor(status: string) {
     switch (status) {
@@ -57,7 +57,7 @@
       <!-- Page Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
-          Dashboard
+          {data.selectedBusiness?.name} - Dashboard
         </h1>
         <p class="text-gray-600 dark:text-gray-300 mt-2 transition-colors duration-300">
           Welcome back! Here's what's happening with your deliveries today.
@@ -89,7 +89,7 @@
                   </div>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center transition-colors duration-300">
-                  <svelte:component this={stat.icon} class="w-6 h-6 text-blue-600 dark:text-purple-400 transition-colors duration-300" />
+                  <component this={stat.icon} class="w-6 h-6 text-blue-600 dark:text-purple-400 transition-colors duration-300"></component>
                 </div>
               </div>
             </CardContent>

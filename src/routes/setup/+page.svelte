@@ -17,7 +17,6 @@
   } from "lucide-svelte";
 
   import { page } from "$app/state";
-  import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
 
   import { PUBLIC_DEBUG_MODE as debug} from "$env/static/public";
@@ -29,8 +28,7 @@
   let formError = $state<object | null>(null);
 
   // Step 1: Business Information
-  let businessName = $state("");
-  let businessType = $state("");
+  let name = $state("");
   let description = $state("");
   let website = $state("");
   let phone = $state("");
@@ -55,7 +53,6 @@
 
   // Step 4: Delivery Settings
   let deliveryRadius = $state("10");
-  let estimatedOrderVolume = $state("");
   let specialRequirements = $state("");
 
   // Country-specific provinces/states
@@ -108,13 +105,7 @@
     }
   };
 
-  const handleSubmit = async () => {
-    isLoading = true;
-    formError = null;
-    // Form will be submitted via SvelteKit form action
-  };
-
-  // Handle form action result
+  // Handle form action errors
   $effect(() => {
     if (page.form?.error) {
       formError = page.form.error;
@@ -125,7 +116,7 @@
   const isStepValid = (step: number) => {
     switch (step) {
       case 1:
-        return businessName && businessType && description;
+        return name && description;
       case 2:
         const addressValid = streetAddress && city && zipPostalCode && country;
         // If country has predefined provinces, require province selection
@@ -141,6 +132,29 @@
         return false;
     }
   };
+
+  if (debug) {
+    name = "Deliveries";
+    description = "We provide delivery services to the local area.";
+    website = "https://example.com";
+    phone = "+1 (555) 123-4567";
+    streetAddress = "123 Main St";
+    city = "Toronto";
+    stateProvince = "Ontario";
+    zipPostalCode = "A1A 1A1";
+    country = "Canada";
+    operatingHours = {
+      monday: { open: "09:00", close: "18:00", enabled: true },
+      tuesday: { open: "09:00", close: "18:00", enabled: true },
+      wednesday: { open: "09:00", close: "18:00", enabled: true },
+      thursday: { open: "09:00", close: "18:00", enabled: true },
+      friday: { open: "09:00", close: "18:00", enabled: true },
+      saturday: { open: "10:00", close: "16:00", enabled: true },
+      sunday: { open: "10:00", close: "16:00", enabled: false }
+    };
+    deliveryRadius = "25";
+    specialRequirements = "Test Special Requirements";
+  }
 </script>
 
 <svelte:head>
@@ -234,17 +248,22 @@
           <form 
             method="POST" 
             use:enhance={() => {
-              return async ({ result }) => {
+              isLoading = true;
+              return async ({ result, update }) => {
                 if (result.type === 'failure') {
                   formError = result.data?.error || 'An error occurred';
                   isLoading = false;
+                  await update();
+                } else {
+                  // For success/redirect, use default behavior
+                  isLoading = false;
+                  await update();
                 }
               };
             }}
           >
             <!-- Hidden form fields for all data -->
-            <input type="hidden" name="businessName" value={businessName} />
-            <input type="hidden" name="businessType" value={businessType} />
+            <input type="hidden" name="name" value={name} />
             <input type="hidden" name="description" value={description} />
             <input type="hidden" name="website" value={website} />
             <input type="hidden" name="phone" value={phone} />
@@ -255,7 +274,6 @@
             <input type="hidden" name="country" value={country} />
             <input type="hidden" name="operatingHours" value={JSON.stringify(operatingHours)} />
             <input type="hidden" name="deliveryRadius" value={deliveryRadius} />
-            <input type="hidden" name="estimatedOrderVolume" value={estimatedOrderVolume} />
             <input type="hidden" name="specialRequirements" value={specialRequirements} />
 
             <CardContent class="space-y-6">
@@ -270,12 +288,12 @@
                 <!-- Step 1: Business Information -->
                 <div class="space-y-4">
                   <div class="space-y-2">
-                    <Label for="businessName" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                    <Label for="name" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
                       Business Name *
                     </Label>
                     <Input
-                      id="businessName"
-                      bind:value={businessName}
+                      id="name"
+                      bind:value={name}
                       placeholder="Enter your business name"
                       class="dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
                       required
