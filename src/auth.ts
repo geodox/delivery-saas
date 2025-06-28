@@ -34,9 +34,10 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
     }),
   ],
   pages: {
+    newUser: "/setup",
     signIn: "/login",
   },
   adapter: SurrealDBAdapter(clientPromise),
   secret: env.AUTH_SECRET,
-  debug: true
+  //debug: true
 })

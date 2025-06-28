@@ -10,8 +10,6 @@
   let { children, showLogin = true, showGetStarted = true }: { children?: Snippet, showLogin?: boolean, showGetStarted?: boolean } = $props();
 
   let mobileMenuOpen = $state(false);
-
-  $inspect(page);
 </script>
 
 <header class="border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50 transition-all duration-300">

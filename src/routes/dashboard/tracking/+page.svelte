@@ -78,7 +78,7 @@
   <HeaderNav>
     <a href="/dashboard" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
     <a href="/dashboard/orders" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
-    <a href="/dashboard/drivers" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Drivers</a>
+    <a href="/dashboard/employees" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Employees</a>
     <a href="/dashboard/tracking" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Live Tracking</a>
     <a href="/dashboard/analytics" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Analytics</a>
   </HeaderNav>
@@ -192,7 +192,7 @@
                       </div>
                     </div>
                     <div class="text-right">
-                      <Badge class={getStatusColor(driver.status)} size="sm">
+                      <Badge class={getStatusColor(driver.status)}>
                         {driver.status}
                       </Badge>
                       <p class="text-xs text-gray-600 dark:text-gray-400 mt-1 transition-colors duration-300">

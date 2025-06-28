@@ -12,7 +12,9 @@ import {
     Star,
   } from "lucide-svelte";
 
-const features = [
+  import type { Feature, Step, PricingPlan, Stat, RecentOrder, ActiveDriver, Order, Employee, StatusOption, LiveDelivery, DriverLocation, KPIMetric, PerformanceData, TopDriver, DeliveryZone, CustomerInsight } from "$lib/data/types";
+
+const features: Feature[] = [
   {
     icon: Package,
     title: "Order Management",
@@ -45,7 +47,7 @@ const features = [
   }
 ];
 
-const steps = [
+const steps: Step[] = [
   {
     number: "1",
     title: "Create Orders",
@@ -63,7 +65,7 @@ const steps = [
   }
 ];
 
-const pricingPlans = [
+const pricingPlans: PricingPlan[] = [
   {
     name: "Starter",
     price: "$150",
@@ -112,7 +114,7 @@ const pricingPlans = [
 
 const companies = ["Company 1", "Company 2", "Company 3", "Company 4", "Company 5"];
 
-const stats = [
+const stats: Stat[] = [
     {
       title: "Total Orders",
       value: "2,847",
@@ -143,7 +145,7 @@ const stats = [
     }
   ];
 
-const recentOrders = [
+const recentOrders: RecentOrder[] = [
   {
     id: "#ORD-001",
     customer: "John Smith",
@@ -181,7 +183,7 @@ const recentOrders = [
   }
 ];
 
-const activeDrivers = [
+const activeDrivers: ActiveDriver[] = [
   {
     name: "Alex Rodriguez",
     status: "delivering",
@@ -208,7 +210,7 @@ const activeDrivers = [
   }
 ];
 
-const orders = [
+const orders: Order[] = [
   {
     id: "#ORD-001",
     customer: {
@@ -313,7 +315,7 @@ const orders = [
   }
 ];
 
-let drivers = [
+let employees: Employee[] = [
   {
     id: "DRV-001",
     name: "Alex Rodriguez",
@@ -330,7 +332,8 @@ let drivers = [
       plate: "ABC-123"
     },
     licenseNumber: "DL123456789",
-    lastActive: "2024-01-15 17:30"
+    lastActive: "2024-01-15 17:30",
+    role: "driver"
   },
   {
     id: "DRV-002",
@@ -348,7 +351,8 @@ let drivers = [
       plate: "XYZ-789"
     },
     licenseNumber: "DL987654321",
-    lastActive: "2024-01-15 17:25"
+    lastActive: "2024-01-15 17:25",
+    role: "driver"
   },
   {
     id: "DRV-003",
@@ -366,10 +370,11 @@ let drivers = [
       plate: "N/A"
     },
     licenseNumber: "DL456789123",
-    lastActive: "2024-01-15 17:35"
+    lastActive: "2024-01-15 17:35",
+    role: "driver"
   },
   {
-    id: "DRV-004",
+    id: "DSP-001",
     name: "Lisa Chen",
     email: "lisa@deliverymanager.com",
     phone: "+1 (555) 456-7890",
@@ -384,10 +389,11 @@ let drivers = [
       plate: "SCT-456"
     },
     licenseNumber: "DL789123456",
-    lastActive: "2024-01-15 16:45"
+    lastActive: "2024-01-15 16:45",
+    role: "dispatcher"
   },
   {
-    id: "DRV-005",
+    id: "DRV-004",
     name: "David Brown",
     email: "david@deliverymanager.com",
     phone: "+1 (555) 567-8901",
@@ -402,10 +408,11 @@ let drivers = [
       plate: "DEF-321"
     },
     licenseNumber: "DL321654987",
-    lastActive: "2024-01-15 14:20"
+    lastActive: "2024-01-15 14:20",
+    role: "driver"
   },
   {
-    id: "DRV-006",
+    id: "DSP-002",
     name: "Sarah Kim",
     email: "sarah@deliverymanager.com",
     phone: "+1 (555) 678-9012",
@@ -420,12 +427,13 @@ let drivers = [
       plate: "MTO-789"
     },
     licenseNumber: "DL654987321",
-    lastActive: "2024-01-15 17:40"
+    lastActive: "2024-01-15 17:40",
+    role: "dispatcher"
   }
 ];
 
-const statusOptions = [
-  { value: "all", label: "All Drivers" },
+const statusOptions: StatusOption[] = [
+  { value: "all", label: "All" },
   { value: "online", label: "Online" },
   { value: "available", label: "Available" },
   { value: "delivering", label: "Delivering" },
@@ -441,7 +449,7 @@ const vehicleTypes = [
   "Van"
 ];
 
-const liveDeliveries = [
+const liveDeliveries: LiveDelivery[] = [
   {
     id: "#ORD-001",
     driver: "Alex Rodriguez",
@@ -492,7 +500,7 @@ const liveDeliveries = [
   }
 ];
 
-const driverLocations = [
+const driverLocations: DriverLocation[] = [
   {
     name: "Alex Rodriguez",
     status: "delivering",
@@ -523,7 +531,7 @@ const driverLocations = [
   }
 ];
 
-const kpiMetrics = [
+const kpiMetrics: KPIMetric[] = [
   {
     title: "Total Revenue",
     value: "$45,231",
@@ -558,7 +566,7 @@ const kpiMetrics = [
   }
 ];
 
-const performanceData = [
+const performanceData: PerformanceData[] = [
   { day: "Mon", orders: 45, revenue: 1250, avgTime: 32 },
   { day: "Tue", orders: 52, revenue: 1450, avgTime: 28 },
   { day: "Wed", orders: 38, revenue: 1100, avgTime: 35 },
@@ -568,7 +576,7 @@ const performanceData = [
   { day: "Sun", orders: 49, revenue: 1380, avgTime: 29 }
 ];
 
-const topDrivers = [
+const topDrivers: TopDriver[] = [
   {
     name: "Alex Rodriguez",
     deliveries: 156,
@@ -599,7 +607,7 @@ const topDrivers = [
   }
 ];
 
-const deliveryZones = [
+const deliveryZones: DeliveryZone[] = [
   {
     zone: "Downtown",
     orders: 342,
@@ -630,7 +638,7 @@ const deliveryZones = [
   }
 ];
 
-const customerInsights = [
+const customerInsights: CustomerInsight[] = [
   {
     metric: "New Customers",
     value: "234",
@@ -666,7 +674,7 @@ export {
   recentOrders,
   activeDrivers,
   orders,
-  drivers,
+  employees as drivers,
   statusOptions,
   vehicleTypes,
   liveDeliveries,
