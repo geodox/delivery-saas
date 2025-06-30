@@ -48,5 +48,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
   },
   adapter: SurrealDBAdapter(clientPromise),
   secret: env.AUTH_SECRET,
+  trustHost: true, // Remove this in production
   //debug: true
 })

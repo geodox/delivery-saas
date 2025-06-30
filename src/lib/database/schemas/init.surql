@@ -77,6 +77,7 @@ DEFINE TABLE business SCHEMAFULL
         FOR create, update, delete
             WHERE ownerId = $auth.id;
 
+-- TODO: Users need to have name, phone, address, etc.
 -- Business basic information
 DEFINE FIELD name ON business TYPE string ASSERT $value != NONE AND $value != "";
 DEFINE FIELD description ON business TYPE string ASSERT $value != NONE AND $value != "";

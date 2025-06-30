@@ -93,7 +93,7 @@ export class Business {
     const country = formData.get('country') as string;
     
     return new Business({
-      name: formData.get('businessName') as string,
+      name: formData.get('name') as string,
       description: formData.get('description') as string,
       website: formData.get('website') as string,
       phone: formData.get('phone') as string,

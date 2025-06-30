@@ -1,3 +1,6 @@
+// Types
+import type { PageServerLoad } from "./$types";
+
 // Svelte
 import { redirect } from "@sveltejs/kit";
 
@@ -6,10 +9,6 @@ import { clientPromise } from "$lib/surrealdb";
 
 // Models
 import { Business } from "$lib/models";
-
-// Types
-import type { LayoutServerLoad } from "./$types";
-import { goto } from "$app/navigation";
 
 // Helper function to extract ID from SurrealDB objects
 function extractId(value: any): string | undefined {
@@ -27,11 +26,10 @@ function extractId(value: any): string | undefined {
   }
 }
 
-// TODO: Lazy load businesses
-export const load: LayoutServerLoad = async ({ locals, url, params }) => {
-  const session = await locals.auth();
+export const load: PageServerLoad = async (event) => {
+  const session = await event.locals.auth();
 
-  // Don't allow access to dashboard if not logged in
+  // Don't allow access to account page if not logged in
   if (!session?.user) {
     throw redirect(303, '/login');
   }
@@ -45,13 +43,8 @@ export const load: LayoutServerLoad = async ({ locals, url, params }) => {
   
   const businessesData = result[0] as any[];
   
-  // Don't allow access to dashboard if not setup
-  if (!businessesData || businessesData.length === 0) {
-    throw redirect(303, '/setup');
-  }
-
   // Convert SurrealDB objects to Business instances
-  const businesses = businessesData.map((businessData: any) => {
+  const businesses = businessesData?.map((businessData: any) => {
     const id = extractId(businessData.id);
     const ownerId = extractId(businessData.ownerId);
     
@@ -69,28 +62,10 @@ export const load: LayoutServerLoad = async ({ locals, url, params }) => {
       createdAt: businessData.createdAt || null,
       updatedAt: businessData.updatedAt || null,
     });
-  });
-
-  // FIXME: Redirect to /dashboard?id=...?
-  // Get current business from URL params or default to first business
-  let selectedBusiness = null;
-  const selectedBusinessId = params.id || null;
-  
-  if (selectedBusinessId) {
-    selectedBusiness = businesses.find(b => b.id === selectedBusinessId) || null;
-  }
-  
-  if (!selectedBusiness && businesses.length === 1) {
-    selectedBusiness = businesses[0];
-  }
-
-  if (!selectedBusinessId && selectedBusiness) {
-    throw redirect(301,`/dashboard/${selectedBusiness.id}`);
-  }
+  }) || [];
 
   return {
     session,
-    businesses,
-    selectedBusiness
+    businesses
   };
-};
+}; 

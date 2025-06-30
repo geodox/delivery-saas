@@ -26,11 +26,11 @@ export class Employee {
   public validate(): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    if (!this.userId?.trim()) {
+    if (!this.userId) {
       errors.push('User ID is required');
     }
 
-    if (!this.businessId?.trim()) {
+    if (!this.businessId) {
       errors.push('Business ID is required');
     }
 

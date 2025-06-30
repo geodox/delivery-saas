@@ -1,10 +1,18 @@
+// Types
 import type { Actions } from './$types';
-import { fail, redirect } from '@sveltejs/kit';
+
+// Svelte
+import { error, fail, redirect } from '@sveltejs/kit';
+
+// SurrealDB
 import { clientPromise } from '$lib/surrealdb';
+
+// Models
 import { Business, Employee } from '$lib/models';
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
+    let businessId: string | undefined;
     try {
       const formData = await request.formData();
       const db = await clientPromise;
@@ -75,6 +83,8 @@ export const actions: Actions = {
             createdAt = time::now(),
             updatedAt = time::now()
         `, employee.toJSON());
+
+        businessId = businessRecord.id;
       }
 
     } catch (error) {
@@ -90,6 +100,10 @@ export const actions: Actions = {
       });
     }
 
-    throw redirect(303, '/dashboard');
+    if (businessId) {
+      throw redirect(303, `/dashboard/${businessId}`);
+    }
+
+    throw error(400, 'Business ID not found');
   }
 };
