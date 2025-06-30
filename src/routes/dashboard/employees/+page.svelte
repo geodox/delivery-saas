@@ -5,28 +5,25 @@
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
-  import { 
-    User, 
-    Search, 
-    Eye, 
-    Edit, 
-    Trash2,
-    MapPin,
-    Phone,
-    Mail,
-    Car,
-    Star,
-    Activity,
-    ChevronLeft,
-    ChevronRight,
-    X,
-    Send,
-    Copy,
-    Check
-  } from "lucide-svelte";
 
-  import { drivers, statusOptions, vehicleTypes } from "$lib/placeholder_data";
-  import type { Employee } from "$lib/placeholder_types";
+  import User from "lucide-svelte/icons/user";
+  import Search from "lucide-svelte/icons/search";
+  import Eye from "lucide-svelte/icons/eye";
+  import Edit from "lucide-svelte/icons/edit";
+  import Trash2 from "lucide-svelte/icons/trash-2";
+  import MapPin from "lucide-svelte/icons/map-pin";
+  import Phone from "lucide-svelte/icons/phone";
+  import Mail from "lucide-svelte/icons/mail";
+  import Star from "lucide-svelte/icons/star";
+  import Activity from "lucide-svelte/icons/activity";
+  import ChevronLeft from "lucide-svelte/icons/chevron-left";
+  import ChevronRight from "lucide-svelte/icons/chevron-right";
+  import X from "lucide-svelte/icons/x";
+  import Send from "lucide-svelte/icons/send";
+  import Copy from "lucide-svelte/icons/copy";
+  import Check from "lucide-svelte/icons/check";
+
+  import { drivers, statusOptions } from "$lib/placeholder_data";
 
   let searchQuery = $state("");
   let selectedStatus = $state("all");

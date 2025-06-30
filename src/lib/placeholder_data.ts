@@ -1,18 +1,16 @@
-import { 
-    Package, 
-    MapPin, 
-    Users, 
-    Bell, 
-    BarChart3, 
-    Zap,
-    Truck,
-    CheckCircle,
-    DollarSign,
-    Clock,
-    Star,
-  } from "lucide-svelte";
+import Package from "lucide-svelte/icons/package";
+import MapPin from "lucide-svelte/icons/map-pin";
+import Users from "lucide-svelte/icons/users";
+import Bell from "lucide-svelte/icons/bell";
+import BarChart3 from "lucide-svelte/icons/bar-chart-3";
+import Zap from "lucide-svelte/icons/zap";
+import Truck from "lucide-svelte/icons/truck";
+import CheckCircle from "lucide-svelte/icons/check-circle";
+import DollarSign from "lucide-svelte/icons/dollar-sign";
+import Clock from "lucide-svelte/icons/clock";
+import Star from "lucide-svelte/icons/star";
 
-  import type { Feature, Step, PricingPlan, Stat, RecentOrder, ActiveDriver, Order, Employee, StatusOption, LiveDelivery, DriverLocation, KPIMetric, PerformanceData, TopDriver, DeliveryZone, CustomerInsight } from "$lib/placeholder_types";
+import type { Feature, Step, PricingPlan, Stat, RecentOrder, ActiveDriver, Order, Employee, StatusOption, LiveDelivery, DriverLocation, KPIMetric, PerformanceData, TopDriver, DeliveryZone, CustomerInsight } from "$lib/placeholder_types";
 
 const features: Feature[] = [
   {

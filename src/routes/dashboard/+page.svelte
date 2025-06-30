@@ -3,15 +3,14 @@
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
-  import { 
-    Package,
-    Clock,
-    CheckCircle,
-    AlertCircle,
-    Users,
-    ArrowUpRight,
-    ArrowDownRight,
-  } from "lucide-svelte";
+
+  import ArrowUpRight from "lucide-svelte/icons/arrow-up-right";
+  import ArrowDownRight from "lucide-svelte/icons/arrow-down-right";
+  import Package from "lucide-svelte/icons/package";
+  import Users from "lucide-svelte/icons/users";
+  import CheckCircle from "lucide-svelte/icons/check-circle";
+  import Clock from "lucide-svelte/icons/clock";
+  import AlertCircle from "lucide-svelte/icons/alert-circle";
   
   import { stats, recentOrders, activeDrivers } from "$lib/placeholder_data";
 

@@ -5,19 +5,19 @@
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
-  import { 
-    Package, 
-    Search, 
-    Plus, 
-    Eye, 
-    Edit, 
-    Trash2,
-    MapPin,
-    Clock,
-    User,
-    ChevronLeft,
-    ChevronRight,
-  } from "lucide-svelte";
+
+  import MapPin from "lucide-svelte/icons/map-pin";
+  import Clock from "lucide-svelte/icons/clock";
+  import User from "lucide-svelte/icons/user";
+  import ChevronLeft from "lucide-svelte/icons/chevron-left";
+  import ChevronRight from "lucide-svelte/icons/chevron-right";
+  import Plus from "lucide-svelte/icons/plus";
+  import Search from "lucide-svelte/icons/search";
+  import Package from "lucide-svelte/icons/package";
+  import Eye from "lucide-svelte/icons/eye";
+  import Edit from "lucide-svelte/icons/edit";
+  import Trash2 from "lucide-svelte/icons/trash-2";
+
   import { orders } from "$lib/placeholder_data";
 
   let searchQuery = $state("");

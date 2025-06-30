@@ -1,15 +1,19 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { signIn } from "@auth/sveltekit/client";
+
   import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Separator } from "$lib/components/ui/separator";
-  import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-svelte";
-
-  import { SignIn } from "@auth/sveltekit/components";
-  import { goto } from "$app/navigation";
-  import { signIn } from "@auth/sveltekit/client";
+  
+  import Eye from "lucide-svelte/icons/eye";
+  import EyeOff from "lucide-svelte/icons/eye-off";
+  import Mail from "lucide-svelte/icons/mail";
+  import Lock from "lucide-svelte/icons/lock";
+  import ArrowRight from "lucide-svelte/icons/arrow-right";
 
   let email = $state("");
   let password = $state("");

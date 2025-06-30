@@ -5,20 +5,14 @@
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
-  import { 
-    MapPin, 
-    Navigation, 
-    Clock, 
-    Phone, 
-    User, 
-    Package,
-    Truck,
-    Search,
-    Filter,
-    RefreshCw,
-    Eye,
-    MessageSquare
-  } from "lucide-svelte";
+  
+  import MapPin from "lucide-svelte/icons/map-pin";
+  import Navigation from "lucide-svelte/icons/navigation";
+  import Clock from "lucide-svelte/icons/clock";
+  import Phone from "lucide-svelte/icons/phone";
+  import User from "lucide-svelte/icons/user";
+  import Package from "lucide-svelte/icons/package";
+  import Truck from "lucide-svelte/icons/truck";
 
   import { liveDeliveries, driverLocations } from "$lib/placeholder_data";
 

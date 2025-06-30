@@ -1,23 +1,21 @@
 <script lang="ts">
+  import { page } from "$app/state";
+  import { enhance } from "$app/forms";
+
   import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Textarea } from "$lib/components/ui/textarea";
-  import { Badge } from "$lib/components/ui/badge";
-  import { 
-    Building,
-    MapPin,
-    Phone,
-    Globe,
-    CheckCircle,
-    ArrowRight,
-    ArrowLeft
-  } from "lucide-svelte";
 
-  import { page } from "$app/state";
-  import { enhance } from "$app/forms";
+  import Building from "lucide-svelte/icons/building";
+  import MapPin from "lucide-svelte/icons/map-pin";
+  import Phone from "lucide-svelte/icons/phone";
+  import Globe from "lucide-svelte/icons/globe";
+  import CheckCircle from "lucide-svelte/icons/check-circle";
+  import ArrowRight from "lucide-svelte/icons/arrow-right";
+  import ArrowLeft from "lucide-svelte/icons/arrow-left";
 
   import { PUBLIC_DEBUG_MODE as debug} from "$env/static/public";
 

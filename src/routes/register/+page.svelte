@@ -1,12 +1,20 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+
   import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Separator } from "$lib/components/ui/separator";
-  import { Eye, EyeOff, Mail, Lock, User, Building, ArrowRight } from "lucide-svelte";
+  
+  import Eye from "lucide-svelte/icons/eye";
+  import EyeOff from "lucide-svelte/icons/eye-off";
+  import Mail from "lucide-svelte/icons/mail";
+  import Lock from "lucide-svelte/icons/lock";
+  import User from "lucide-svelte/icons/user";
+  import Building from "lucide-svelte/icons/building";
+  import ArrowRight from "lucide-svelte/icons/arrow-right";
 
   let firstName = $state("");
   let lastName = $state("");

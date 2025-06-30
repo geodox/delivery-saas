@@ -1,5 +1,3 @@
-import type { Icon } from "lucide-svelte";
-
 // Basic types
 type TrendDirection = "up" | "down";
 type OrderStatus = "delivered" | "in-transit" | "pending" | "preparing" | "cancelled" | "assigned";
@@ -9,7 +7,7 @@ type DeliveryStatus = "in-transit" | "approaching" | "picked-up" | "delivered";
 
 // Feature interface
 interface Feature {
-  icon: typeof Icon;
+  icon: any;
   title: string;
   description: string;
 }
@@ -38,7 +36,7 @@ interface Stat {
   value: string;
   change: string;
   trend: TrendDirection;
-  icon: typeof Icon;
+  icon: any;
 }
 
 // Customer interface
@@ -146,7 +144,7 @@ interface KPIMetric {
   change: string;
   trend: TrendDirection;
   period: string;
-  icon: typeof Icon;
+  icon: any;
 }
 
 // Performance data interface
@@ -185,7 +183,6 @@ interface CustomerInsight {
 
 // Export all types
 export type {
-  Icon,
   TrendDirection,
   OrderStatus,
   DriverStatus,

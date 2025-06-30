@@ -3,7 +3,9 @@
   import { Button } from "$lib/components/ui/button";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
-  import { Check, ArrowRight } from "lucide-svelte";
+  
+  import Check from "lucide-svelte/icons/check";
+  import ArrowRight from "lucide-svelte/icons/arrow-right";
 
   import { companies, features, steps, pricingPlans } from "$lib/placeholder_data";
 </script>

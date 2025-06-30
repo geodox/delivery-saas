@@ -1,10 +1,16 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+
   import type { Business } from "$lib/models";
+
   import { Button } from "$lib/components/ui/button";
   import { Card, CardContent } from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
-  import { Building, MapPin, Check, X } from "lucide-svelte";
-  import { goto } from "$app/navigation";
+  
+  import Building from "lucide-svelte/icons/building";
+  import MapPin from "lucide-svelte/icons/map-pin";
+  import Check from "lucide-svelte/icons/check";
+  import X from "lucide-svelte/icons/x";
 
   let { data, children } = $props<{
     data: {

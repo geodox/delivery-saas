@@ -3,18 +3,17 @@
   import { HeaderNav, Footer } from "$lib/components";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Button } from "$lib/components/ui/button";
-  import { 
-    TrendingUp, 
-    TrendingDown,
-    Download,
-    Activity,
-    Clock,
-    MapPin,
-    Star,
-    Users,
-    ArrowUpRight,
-    ArrowDownRight
-  } from "lucide-svelte";
+  
+  import TrendingUp from "lucide-svelte/icons/trending-up";
+  import TrendingDown from "lucide-svelte/icons/trending-down";
+  import Download from "lucide-svelte/icons/download";
+  import Activity from "lucide-svelte/icons/activity";
+  import Clock from "lucide-svelte/icons/clock";
+  import MapPin from "lucide-svelte/icons/map-pin";
+  import Star from "lucide-svelte/icons/star";
+  import Users from "lucide-svelte/icons/users";
+  import ArrowUpRight from "lucide-svelte/icons/arrow-up-right";
+  import ArrowDownRight from "lucide-svelte/icons/arrow-down-right";
 
   import { customerInsights, deliveryZones, kpiMetrics, performanceData, topDrivers } from "$lib/placeholder_data";
 

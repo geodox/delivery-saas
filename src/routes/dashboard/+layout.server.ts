@@ -19,6 +19,7 @@ function extractId(value: any): string | undefined {
   }
 }
 
+// TODO: Lazy load businesses
 export const load: LayoutServerLoad = async (event) => {
   const session = await event.locals.auth();
 
