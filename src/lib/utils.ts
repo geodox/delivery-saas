@@ -12,6 +12,11 @@ export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "childre
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 
+/**
+ * Svelte Attachment to handle click outside of an element.
+ * @param callback - The function to call when the click is outside the element.
+ * @returns Svelte Attachment
+ */
 export function clickOutside(callback: () => void) {
   return (element: Element) => {
 		const handleClick = (event: Event) => {

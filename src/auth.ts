@@ -10,7 +10,6 @@ import Facebook from "@auth/sveltekit/providers/facebook";
 declare module "@auth/sveltekit" {
   interface Session {
     user: {
-      userId: string,
       name: string,
       image: string,
       email: string,
@@ -23,7 +22,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
   callbacks: {
     session: async ({ session, user }) => {
       if (session.user) {
-        session.user.userId = user.id;
         session.user.name = user.name || "";
         session.user.image = user.image || "";
         session.user.email = user.email || "";
@@ -48,6 +46,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
   },
   adapter: SurrealDBAdapter(clientPromise),
   secret: env.AUTH_SECRET,
-  trustHost: true, // Remove this in production
+  trustHost: true, // TODO: Remove this in production
   //debug: true
 })

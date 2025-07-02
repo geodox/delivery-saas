@@ -1,34 +1,14 @@
 // Svelte
 import { redirect } from "@sveltejs/kit";
 
-// SurrealDB
-import { clientPromise } from "$lib/surrealdb";
-
 // Models
 import { Business } from "$lib/models";
 
 // Types
 import type { LayoutServerLoad } from "./$types";
-import { goto } from "$app/navigation";
-
-// Helper function to extract ID from SurrealDB objects
-function extractId(value: any): string | undefined {
-  if (!value) return undefined;
-  
-  if (typeof value === 'object' && value.id) {
-    // Handle _RecordId object
-    return value.id;
-  } else if (typeof value === 'string' && value.includes(':')) {
-    // Handle string format with colon (table:id)
-    return value.split(':')[1];
-  } else {
-    // Handle plain string or other formats
-    return String(value);
-  }
-}
 
 // TODO: Lazy load businesses
-export const load: LayoutServerLoad = async ({ locals, url, params }) => {
+export const load: LayoutServerLoad = async ({ fetch, params, locals }) => {
   const session = await locals.auth();
 
   // Don't allow access to dashboard if not logged in
@@ -37,39 +17,9 @@ export const load: LayoutServerLoad = async ({ locals, url, params }) => {
   }
 
   // Get businesses for user
-  const result = await (await clientPromise).query(`
-    SELECT * FROM business 
-    WHERE ownerId = type::thing('user', $ownerId)
-    OR id IN (SELECT businessId FROM employees WHERE userId = type::thing('user', $ownerId))
-  `, { ownerId: session.user?.id });
-  
-  const businessesData = result[0] as any[];
-  
-  // Don't allow access to dashboard if not setup
-  if (!businessesData || businessesData.length === 0) {
-    throw redirect(303, '/setup');
-  }
-
-  // Convert SurrealDB objects to Business instances
-  const businesses = businessesData.map((businessData: any) => {
-    const id = extractId(businessData.id);
-    const ownerId = extractId(businessData.ownerId);
-    
-    // Create Business instance with extracted data
-    return new Business({
-      id,
-      name: businessData.name || '',
-      description: businessData.description || '',
-      website: businessData.website || null,
-      phone: businessData.phone || null,
-      address: businessData.address || null,
-      delivery: businessData.delivery || null,
-      operatingHours: businessData.operatingHours || null,
-      ownerId: ownerId || undefined,
-      createdAt: businessData.createdAt || null,
-      updatedAt: businessData.updatedAt || null,
-    });
-  });
+  const businesses: Business[] = await fetch('/api/businesses')
+  .then(res => res.json())
+  .then(data => data.map((business: any) => new Business(business)));
 
   // FIXME: Redirect to /dashboard?id=...?
   // Get current business from URL params or default to first business
@@ -89,7 +39,6 @@ export const load: LayoutServerLoad = async ({ locals, url, params }) => {
   }
 
   return {
-    session,
     businesses,
     selectedBusiness
   };

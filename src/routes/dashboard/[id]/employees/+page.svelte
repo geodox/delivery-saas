@@ -1,11 +1,12 @@
 <script lang="ts">
+  // Components
   import { HeaderNav, Footer } from "$lib/components";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
-
+  // Lucide Icons
   import User from "lucide-svelte/icons/user";
   import Search from "lucide-svelte/icons/search";
   import Eye from "lucide-svelte/icons/eye";
@@ -22,8 +23,10 @@
   import Send from "lucide-svelte/icons/send";
   import Copy from "lucide-svelte/icons/copy";
   import Check from "lucide-svelte/icons/check";
-
+  // Placeholder Data
   import { drivers, statusOptions } from "$lib/placeholder_data";
+
+  const { data } = $props();
 
   let searchQuery = $state("");
   let selectedStatus = $state("all");
@@ -222,11 +225,11 @@
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
   <HeaderNav>
-    <a href="/dashboard" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
-    <a href="/dashboard/orders" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
-    <a href="/dashboard/employees" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Employees</a>
-    <a href="/dashboard/tracking" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Live Tracking</a>
-    <a href="/dashboard/analytics" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Analytics</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/orders`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/employees`} role="menuitem" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Employees</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/tracking`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Live Tracking</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/analytics`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Analytics</a>
   </HeaderNav>
 
   <main class="py-8">

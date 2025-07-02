@@ -16,6 +16,7 @@ DEFINE TABLE user SCHEMAFULL
             OR $auth.id IN (SELECT ownerId FROM business WHERE id IN (SELECT businessId FROM employees WHERE userId = id));
 
 DEFINE FIELD email ON user TYPE string ASSERT string::is::email($value);
+DEFINE FIELD emailVerified ON user TYPE option<datetime>;
 DEFINE FIELD password ON user TYPE option<string>;
 DEFINE FIELD name ON user TYPE string;
 DEFINE FIELD image ON user TYPE option<string>;

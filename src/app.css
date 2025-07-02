@@ -8,6 +8,57 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Accessibility utilities */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.focus\:not-sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Improved focus styles */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* High contrast focus for better visibility */
+@media (prefers-contrast: high) {
+  *:focus-visible {
+    outline: 3px solid hsl(var(--ring));
+    outline-offset: 1px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @theme {
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -210,15 +261,12 @@
   --sidebar-ring: 262 83% 58%;
 }
 
-/* Enhanced dark mode specific styles */
 .dark {
-  /* Add subtle texture to the background */
   background-image: 
     radial-gradient(circle at 25% 25%, hsl(262 83% 58% / 0.05) 0%, transparent 50%),
     radial-gradient(circle at 75% 75%, hsl(195 100% 65% / 0.03) 0%, transparent 50%);
 }
 
-/* Improved scrollbar for dark mode */
 .dark ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -237,16 +285,9 @@
   background: hsl(240 6% 28%);
 }
 
-/* Enhanced selection colors for dark mode */
 .dark ::selection {
   background: hsl(262 83% 58% / 0.3);
   color: hsl(240 5% 96%);
-}
-
-/* Improved focus styles for dark mode */
-.dark *:focus-visible {
-  outline: 2px solid hsl(262 83% 58%);
-  outline-offset: 2px;
 }
 
 /* Base styles */

@@ -5,5 +5,5 @@ import Footer from "./Footer.svelte";
 export {
   HeaderNav,
   ThemeToggle,
-  Footer
+  Footer,
 };

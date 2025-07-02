@@ -4,89 +4,37 @@ import type { Actions } from './$types';
 // Svelte
 import { error, fail, redirect } from '@sveltejs/kit';
 
-// SurrealDB
-import { clientPromise } from '$lib/surrealdb';
-
-// Models
-import { Business, Employee } from '$lib/models';
-
 export const actions: Actions = {
-  default: async ({ request, locals }) => {
+  default: async ({ request, fetch }) => {
     let businessId: string | undefined;
     try {
       const formData = await request.formData();
-      const db = await clientPromise;
-      const session = await locals.auth();
-
-      // Create business instance from form data
-      const business = Business.fromFormData(formData);
-
-      // Validate business data
-      const validation = business.validate();
-      if (!validation.isValid) {
-        return fail(400, { 
-          error: 'Validation failed',
-          details: validation.errors,
-          data: business.toJSON()
+      // Convert formData to plain object
+      const data: Record<string, any> = {};
+      for (const [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      // If operatingHours is a stringified JSON, parse it
+      if (typeof data.operatingHours === 'string') {
+        try {
+          data.operatingHours = JSON.parse(data.operatingHours);
+        } catch {}
+      }
+      // POST to API endpoint
+      const res = await fetch('/api/businesses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        return fail(res.status, {
+          error: result.error || 'Failed to create business',
+          details: result.details,
+          data
         });
       }
-
-      // Create business profile
-      const businessResult = await db.query(`
-        CREATE business SET 
-          name = $name,
-          description = $description,
-          website = $website,
-          phone = $phone,
-          address = $address,
-          delivery = $delivery,
-          operatingHours = $operatingHours,
-          ownerId = type::thing('user', $ownerId),
-          createdAt = time::now(),
-          updatedAt = time::now()
-      `, { 
-        ...business.toJSON(),
-        ownerId: session?.user?.userId
-      }) as any[];
-
-      const businessRecord = businessResult[0]?.[0];
-      if (!businessRecord || !businessRecord.id) {
-        return fail(500, { 
-          error: 'Failed to create business profile',
-          data: business.toJSON()
-        });
-      }
-
-      // Create employee record
-      if (session?.user?.userId) {
-        const employee = new Employee({
-          userId: session.user.userId,
-          businessId: businessRecord.id,
-          role: 'owner',
-          status: 'active'
-        });
-
-        const employeeValidation = employee.validate();
-        if (!employeeValidation.isValid) {
-          return fail(500, { 
-            error: 'Failed to create employee record',
-            details: employeeValidation.errors
-          });
-        }
-
-        await db.query(`
-          CREATE employees SET 
-            userId = type::thing('user', $userId),
-            businessId = $businessId,
-            role = $role,
-            status = $status,
-            createdAt = time::now(),
-            updatedAt = time::now()
-        `, employee.toJSON());
-
-        businessId = businessRecord.id;
-      }
-
+      businessId = result.businessId;
     } catch (error) {
       console.error('Business setup error:', error);
       

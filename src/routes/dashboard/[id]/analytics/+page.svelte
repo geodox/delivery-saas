@@ -1,9 +1,10 @@
 <!-- src/routes/dashboard/analytics/+page.svelte -->
 <script lang="ts">
+  // Components
   import { HeaderNav, Footer } from "$lib/components";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Button } from "$lib/components/ui/button";
-  
+  // Lucide Icons
   import TrendingUp from "lucide-svelte/icons/trending-up";
   import TrendingDown from "lucide-svelte/icons/trending-down";
   import Download from "lucide-svelte/icons/download";
@@ -14,11 +15,13 @@
   import Users from "lucide-svelte/icons/users";
   import ArrowUpRight from "lucide-svelte/icons/arrow-up-right";
   import ArrowDownRight from "lucide-svelte/icons/arrow-down-right";
-
+  // Placeholder Data
   import { customerInsights, deliveryZones, kpiMetrics, performanceData, topDrivers } from "$lib/placeholder_data";
 
-  let selectedPeriod = "7d";
-  let selectedMetric = "all";
+  const { data } = $props();
+
+  let selectedPeriod = $state("7d");
+  let selectedMetric = $state("all");
 
   const maxOrders = Math.max(...performanceData.map(d => d.orders));
   const maxRevenue = Math.max(...performanceData.map(d => d.revenue));
@@ -30,11 +33,11 @@
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
   <HeaderNav>
-    <a href="/dashboard" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
-    <a href="/dashboard/orders" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
-    <a href="/dashboard/employees" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Employees</a>
-    <a href="/dashboard/tracking" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Live Tracking</a>
-    <a href="/dashboard/analytics" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Analytics</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/orders`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/employees`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Employees</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/tracking`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Live Tracking</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/analytics`} role="menuitem" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Analytics</a>
   </HeaderNav>
 
   <main class="py-8">
@@ -96,7 +99,7 @@
                   </div>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center transition-colors duration-300">
-                  <svelte:component this={metric.icon} class="w-6 h-6 text-blue-600 dark:text-purple-400 transition-colors duration-300" />
+                  <component this={metric.icon} class="w-6 h-6 text-blue-600 dark:text-purple-400 transition-colors duration-300"></component>
                 </div>
               </div>
             </CardContent>

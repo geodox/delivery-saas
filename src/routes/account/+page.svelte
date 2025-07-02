@@ -125,33 +125,33 @@
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
   <HeaderNav>
-    <a href="/dashboard" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
-    <a href="/account" class="text-blue-600 dark:text-purple-400 font-medium">Account</a>
+    <a href="/dashboard" role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
+    <a href="/account" role="menuitem" class="text-blue-600 dark:text-purple-400 font-medium">Account</a>
   </HeaderNav>
 
   <!-- Main Content -->
-  <div class="container mx-auto px-4 py-8">
+  <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-8">
     <div class="max-w-4xl mx-auto">
       <!-- Page Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Account Settings</h1>
-        <p class="text-gray-600 dark:text-gray-300">Manage your profile, security, and preferences</p>
+      <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Account Settings</h1>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300">Manage your profile, security, and preferences</p>
       </div>
 
-      <div class="grid lg:grid-cols-3 gap-8">
+      <div class="space-y-6">
         <!-- Profile Section -->
-        <div class="lg:col-span-3 space-y-6">
+        <div class="space-y-6">
           <!-- Profile Information -->
           <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
-            <CardHeader>
-              <div class="flex items-center justify-between">
+            <CardHeader class="pb-4 sm:pb-6">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex items-center space-x-3">
-                  <div class="w-10 h-10 bg-blue-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                    <User class="w-5 h-5 text-blue-600 dark:text-purple-400" />
+                  <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                    <User class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <CardTitle class="text-xl dark:text-white">Profile Information</CardTitle>
-                    <CardDescription class="dark:text-gray-300">Update your personal details</CardDescription>
+                    <CardTitle class="text-lg sm:text-xl dark:text-white">Profile Information</CardTitle>
+                    <CardDescription class="dark:text-gray-300 text-sm">Update your personal details</CardDescription>
                   </div>
                 </div>
                 {#if !isEditingProfile}
@@ -159,7 +159,7 @@
                     variant="outline" 
                     size="sm"
                     onclick={() => isEditingProfile = true}
-                    class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+                    class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 w-full sm:w-auto"
                   >
                     <Edit class="w-4 h-4 mr-2" />
                     Edit
@@ -167,7 +167,7 @@
                 {/if}
               </div>
             </CardHeader>
-            <CardContent class="space-y-6">
+            <CardContent class="space-y-4 sm:space-y-6">
               {#if isEditingProfile}
                 <div class="space-y-4">
                   <div>
@@ -198,11 +198,11 @@
                     {/if}
                   </div>
                   
-                  <div class="flex items-center space-x-3 pt-4">
+                  <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4">
                     <Button 
                       onclick={saveProfile}
                       disabled={isSaving}
-                      class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700"
+                      class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 flex-1"
                     >
                       {#if isSaving}
                         <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
@@ -214,7 +214,7 @@
                     <Button 
                       variant="outline" 
                       onclick={cancelEdit}
-                      class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+                      class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 flex-1"
                     >
                       <X class="w-4 h-4 mr-2" />
                       Cancel
@@ -223,21 +223,21 @@
                 </div>
               {:else}
                 <div class="space-y-4">
-                  <div class="flex items-center space-x-4">
+                  <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                     {#if profile.image}
-                      <img src={profile.image} alt="Profile" class="w-16 h-16 rounded-full" />
+                      <img src={profile.image} alt="Profile" class="w-16 h-16 rounded-full mx-auto sm:mx-0" />
                     {:else}
-                      <div class="w-16 h-16 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center">
+                      <div class="w-16 h-16 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto sm:mx-0">
                         <User class="w-8 h-8 text-gray-400 dark:text-gray-500" />
                       </div>
                     {/if}
-                    <div>
+                    <div class="text-center sm:text-left">
                       <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{profile.name}</h3>
                       <p class="text-gray-600 dark:text-gray-300">{profile.email}</p>
                     </div>
                   </div>
                   
-                  <div class="grid grid-cols-2 gap-4 pt-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                     <div>
                       <p class="text-sm text-gray-500 dark:text-gray-400">Member since</p>
                       <p class="text-sm font-medium text-gray-900 dark:text-white">
@@ -258,22 +258,22 @@
 
           <!-- Security Settings -->
           <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
-            <CardHeader>
+            <CardHeader class="pb-4 sm:pb-6">
               <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
-                  <Shield class="w-5 h-5 text-red-600 dark:text-red-400" />
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                  <Shield class="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <CardTitle class="text-xl dark:text-white">Security</CardTitle>
-                  <CardDescription class="dark:text-gray-300">Manage your account security</CardDescription>
+                  <CardTitle class="text-lg sm:text-xl dark:text-white">Security</CardTitle>
+                  <CardDescription class="dark:text-gray-300 text-sm">Manage your account security</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent class="space-y-6">
+            <CardContent class="space-y-4 sm:space-y-6">
               <div class="space-y-4">
-                <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
                   <div class="flex items-center space-x-3">
-                    <Key class="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <Key class="w-5 h-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
                     <div>
                       <h4 class="font-medium text-gray-900 dark:text-white">Two-Factor Authentication</h4>
                       <p class="text-sm text-gray-600 dark:text-gray-300">
@@ -285,13 +285,13 @@
                     variant={security.twoFactorEnabled ? "default" : "outline"}
                     size="sm"
                     onclick={toggleTwoFactor}
-                    class={security.twoFactorEnabled ? 'bg-green-600 hover:bg-green-700' : 'border-gray-300 dark:border-slate-600'}
+                    class={security.twoFactorEnabled ? 'bg-green-600 hover:bg-green-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 w-full sm:w-auto'}
                   >
                     {security.twoFactorEnabled ? 'Enabled' : 'Enable'}
                   </Button>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
                   <div class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
                     <p class="text-sm text-gray-500 dark:text-gray-400">Last password change</p>
                     <p class="text-sm font-medium text-gray-900 dark:text-white">
@@ -304,7 +304,7 @@
                       {security.lastLogin.toLocaleDateString()}
                     </p>
                   </div>
-                  <div class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                  <div class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg sm:col-span-2 lg:col-span-1">
                     <p class="text-sm text-gray-500 dark:text-gray-400">Active sessions</p>
                     <p class="text-sm font-medium text-gray-900 dark:text-white">
                       {security.activeSessions} devices
@@ -317,20 +317,20 @@
 
           <!-- Notification Preferences -->
           <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
-            <CardHeader>
+            <CardHeader class="pb-4 sm:pb-6">
               <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
-                  <Bell class="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                  <Bell class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div>
-                  <CardTitle class="text-xl dark:text-white">Notifications</CardTitle>
-                  <CardDescription class="dark:text-gray-300">Manage your notification preferences</CardDescription>
+                  <CardTitle class="text-lg sm:text-xl dark:text-white">Notifications</CardTitle>
+                  <CardDescription class="dark:text-gray-300 text-sm">Manage your notification preferences</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div class="space-y-4">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <h4 class="font-medium text-gray-900 dark:text-white">Email Notifications</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-300">Receive notifications via email</p>
@@ -339,7 +339,7 @@
                     variant={notifications.emailNotifications ? "default" : "outline"}
                     size="sm"
                     onclick={() => notifications.emailNotifications = !notifications.emailNotifications}
-                    class={notifications.emailNotifications ? 'bg-blue-600 hover:bg-blue-700' : 'border-gray-300 dark:border-slate-600'}
+                    class={notifications.emailNotifications ? 'bg-blue-600 hover:bg-blue-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 w-full sm:w-auto'}
                   >
                     {notifications.emailNotifications ? 'On' : 'Off'}
                   </Button>
@@ -347,7 +347,7 @@
                 
                 <Separator />
                 
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <h4 class="font-medium text-gray-900 dark:text-white">Push Notifications</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-300">Receive notifications in your browser</p>
@@ -356,7 +356,7 @@
                     variant={notifications.pushNotifications ? "default" : "outline"}
                     size="sm"
                     onclick={() => notifications.pushNotifications = !notifications.pushNotifications}
-                    class={notifications.pushNotifications ? 'bg-blue-600 hover:bg-blue-700' : 'border-gray-300 dark:border-slate-600'}
+                    class={notifications.pushNotifications ? 'bg-blue-600 hover:bg-blue-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 w-full sm:w-auto'}
                   >
                     {notifications.pushNotifications ? 'On' : 'Off'}
                   </Button>
@@ -364,7 +364,7 @@
                 
                 <Separator />
                 
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
                     <h4 class="font-medium text-gray-900 dark:text-white">Marketing Emails</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-300">Receive promotional content and updates</p>
@@ -373,7 +373,7 @@
                     variant={notifications.marketingEmails ? "default" : "outline"}
                     size="sm"
                     onclick={() => notifications.marketingEmails = !notifications.marketingEmails}
-                    class={notifications.marketingEmails ? 'bg-blue-600 hover:bg-blue-700' : 'border-gray-300 dark:border-slate-600'}
+                    class={notifications.marketingEmails ? 'bg-blue-600 hover:bg-blue-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 w-full sm:w-auto'}
                   >
                     {notifications.marketingEmails ? 'On' : 'Off'}
                   </Button>
@@ -384,21 +384,22 @@
 
           <!-- Businesses -->
           <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
-            <CardHeader>
-              <div class="flex items-center justify-between">
+            <CardHeader class="pb-4 sm:pb-6">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex items-center space-x-3">
-                  <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                    <Building class="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                    <Building class="w-4 h-4 sm:w-5 sm:h-5 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <CardTitle class="text-xl dark:text-white">Businesses</CardTitle>
-                    <CardDescription class="dark:text-gray-300">Manage your businesses</CardDescription>
+                    <CardTitle class="text-lg sm:text-xl dark:text-white">Businesses</CardTitle>
+                    <CardDescription class="dark:text-gray-300 text-sm">Manage your businesses</CardDescription>
                   </div>
                 </div>
                 <Button 
+                  href="/setup"
                   variant="outline" 
                   size="sm"
-                  class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+                  class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 w-full sm:w-auto"
                 >
                   <Building class="w-4 h-4 mr-2" />
                   Add Business
@@ -412,7 +413,8 @@
                   <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No businesses yet</h3>
                   <p class="text-gray-600 dark:text-gray-300 mb-4">Get started by creating your first business</p>
                   <Button 
-                    class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700"
+                    href="/setup"
+                    class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 w-full sm:w-auto"
                   >
                     <Building class="w-4 h-4 mr-2" />
                     Create Business
@@ -422,53 +424,65 @@
                 <div class="space-y-4">
                   {#each data.businesses as business}
                     <div class="border border-gray-200 dark:border-slate-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
-                      <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                          <div class="flex items-center space-x-3 mb-2">
-                            <div class="w-8 h-8 bg-blue-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                              <Building class="w-4 h-4 text-blue-600 dark:text-purple-400" />
-                            </div>
-                            <div>
-                              <h4 class="font-medium text-gray-900 dark:text-white">{business.name}</h4>
+                      <div class="flex flex-col gap-4">
+                        <div class="flex items-start gap-3">
+                          <div class="w-8 h-8 bg-blue-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Building class="w-4 h-4 text-blue-600 dark:text-purple-400" />
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                              <h4 class="font-medium text-gray-900 dark:text-white truncate">{business.name}</h4>
                               {#if business.ownerId === data.session?.user?.id}
-                                <Badge variant="default" class="text-xs">Owner</Badge>
+                                <Badge variant="default" class="text-xs w-fit">Owner</Badge>
                               {:else}
-                                <Badge variant="secondary" class="text-xs">Employee</Badge>
+                                <Badge variant="secondary" class="text-xs w-fit">Employee</Badge>
                               {/if}
                             </div>
-                          </div>
-                          
-                          {#if business.description}
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
-                              {business.description}
-                            </p>
-                          {/if}
+                            
+                            {#if business.description}
+                              <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
+                                {business.description}
+                              </p>
+                            {/if}
 
-                          {#if business.address}
-                            <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                              <MapPin class="w-4 h-4" />
-                              <span>
-                                {business.address.city}, {business.address.stateProvince}
-                              </span>
-                            </div>
-                          {/if}
+                            {#if business.address}
+                              <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                                <MapPin class="w-4 h-4 flex-shrink-0" />
+                                <span class="truncate">
+                                  {business.address.city}, {business.address.stateProvince}
+                                </span>
+                              </div>
+                            {/if}
+                          </div>
                         </div>
                         
-                        <div class="flex items-center space-x-2">
+                        <div class="flex flex-col sm:flex-row gap-2">
                           {#if business.website}
                             <Button 
+                              href={business.website}
+                              target="_blank"
                               variant="outline" 
                               size="sm"
-                              class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+                              class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 flex-1 sm:flex-none"
                             >
                               <ExternalLink class="w-4 h-4 mr-2" />
                               Website
                             </Button>
                           {/if}
                           <Button 
+                            href={`/dashboard/${business.id}`}
                             variant="outline" 
                             size="sm"
-                            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+                            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 flex-1 sm:flex-none"
+                          >
+                            <Edit class="w-4 h-4 mr-2" />
+                            Dashboard
+                          </Button>
+                          <Button 
+                            href={`/dashboard/${business.id}/edit`}
+                            variant="outline" 
+                            size="sm"
+                            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 flex-1 sm:flex-none"
                           >
                             <Edit class="w-4 h-4 mr-2" />
                             Edit
@@ -484,7 +498,7 @@
 
           <!-- Danger Zone -->
           <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm border-red-200 dark:border-red-800">
-            <CardHeader>
+            <CardHeader class="pb-4 sm:pb-6">
               <CardTitle class="text-lg text-red-600 dark:text-red-400">Danger Zone</CardTitle>
             </CardHeader>
             <CardContent>
@@ -510,10 +524,10 @@
 {#if showDeleteConfirm}
   <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-slate-700">
-      <div class="p-6">
+      <div class="p-4 sm:p-6">
         <div class="flex items-center space-x-3 mb-4">
-          <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
-            <Trash2 class="w-5 h-5 text-red-600 dark:text-red-400" />
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+            <Trash2 class="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400" />
           </div>
           <div>
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Delete Account</h3>
@@ -526,17 +540,17 @@
           including businesses, orders, and settings.
         </p>
         
-        <div class="flex space-x-3">
+        <div class="flex flex-col sm:flex-row gap-3">
           <Button 
             variant="outline" 
             onclick={() => showDeleteConfirm = false}
-            class="flex-1 border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
           >
             Cancel
           </Button>
           <Button 
             onclick={confirmDeleteAccount}
-            class="flex-1 bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+            class="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
           >
             Delete Account
           </Button>

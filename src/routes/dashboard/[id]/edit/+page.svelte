@@ -1,10 +1,8 @@
 <script lang="ts">
   // Types
   import type { Business } from "$lib/models";
-  
   // Svelte
   import { goto } from "$app/navigation";
-
   // Components
   import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
@@ -13,7 +11,6 @@
   import { Label } from "$lib/components/ui/label";
   import { Textarea } from "$lib/components/ui/textarea";
   import { Badge } from "$lib/components/ui/badge";
-
   // Lucide Icons
   import Building from "lucide-svelte/icons/building";
   import MapPin from "lucide-svelte/icons/map-pin";
@@ -200,8 +197,8 @@
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
   <HeaderNav>
-    <a href={`/dashboard/${data.selectedBusiness.id}`} class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
-    <a href="/account" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Account</a>
+    <a href={`/dashboard/${data.selectedBusiness.id}`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
+    <a href="/account" role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Account</a>
   </HeaderNav>
 
   <!-- Main Content -->

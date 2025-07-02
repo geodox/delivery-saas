@@ -14,32 +14,77 @@
   import Mail from "lucide-svelte/icons/mail";
   import Lock from "lucide-svelte/icons/lock";
   import ArrowRight from "lucide-svelte/icons/arrow-right";
+  import AlertCircle from "lucide-svelte/icons/alert-circle";
 
   let email = $state("");
   let password = $state("");
   let showPassword = $state(false);
   let isLoading = $state(false);
+  let errors = $state<{ email?: string; password?: string; general?: string }>({});
+  let rememberMe = $state(false);
 
   const handleLogin = async (event: SubmitEvent) => {
     event.preventDefault();
     isLoading = true;
-    // TODO: Handle login logic here
+    errors = {};
+
+    // Basic validation
+    if (!email) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = "Please enter a valid email address";
+    }
+
+    if (!password) {
+      errors.password = "Password is required";
+    } else if (password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      isLoading = false;
+      return;
+    }
+
+    try {
+      // TODO: Handle login logic here
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      goto("/dashboard");
+    } catch (error) {
+      errors.general = "Invalid email or password. Please try again.";
+    } finally {
+      isLoading = false;
+    }
   };
 
   const togglePasswordVisibility = () => {
     showPassword = !showPassword;
   };
+
+  const handleEmailInput = () => {
+    if (errors.email) {
+      errors.email = undefined;
+    }
+  };
+
+  const handlePasswordInput = () => {
+    if (errors.password) {
+      errors.password = undefined;
+    }
+  };
 </script>
 
 <svelte:head>
   <title>Login - DeliveryManager</title>
+  <meta name="description" content="Sign in to your DeliveryManager account to access your delivery dashboard." />
 </svelte:head>
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
   <HeaderNav showLogin={false} showGetStarted={false} />
     <!-- <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Home</a> -->
 
-  <section class="py-20 lg:py-32">
+  <main id="main-content" class="py-20 lg:py-32">
     <div class="container mx-auto px-4">
       <div class="max-w-md mx-auto">
         <Card class="border-0 shadow-2xl dark:bg-slate-800/90 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300">
@@ -53,22 +98,38 @@
           </CardHeader>
           
           <CardContent class="space-y-6">
-            <form onsubmit={handleLogin} class="space-y-4">
+            <!-- Error Alert -->
+            {#if errors.general}
+              <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4" role="alert" aria-live="polite">
+                <div class="flex items-center space-x-2">
+                  <AlertCircle class="w-5 h-5 text-red-500 dark:text-red-400" aria-hidden="true" />
+                  <p class="text-sm text-red-700 dark:text-red-300">{errors.general}</p>
+                </div>
+              </div>
+            {/if}
+
+            <form onsubmit={handleLogin} class="space-y-4" novalidate>
               <div class="space-y-2">
                 <Label for="email" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
                   Email address
                 </Label>
                 <div class="relative">
-                  <Mail class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
+                  <Mail class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
                   <Input
                     id="email"
                     type="email"
                     bind:value={email}
+                    oninput={handleEmailInput}
                     placeholder="Enter your email"
-                    class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
+                    class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300 {errors.email ? 'border-red-500 dark:border-red-400' : ''}"
                     required
+                    aria-describedby={errors.email ? 'email-error' : undefined}
+                    aria-invalid={!!errors.email}
                   />
                 </div>
+                {#if errors.email}
+                  <p id="email-error" class="text-sm text-red-600 dark:text-red-400" role="alert">{errors.email}</p>
+                {/if}
               </div>
 
               <div class="space-y-2">
@@ -76,33 +137,41 @@
                   Password
                 </Label>
                 <div class="relative">
-                  <Lock class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
+                  <Lock class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     bind:value={password}
+                    oninput={handlePasswordInput}
                     placeholder="Enter your password"
-                    class="pl-10 pr-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
+                    class="pl-10 pr-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300 {errors.password ? 'border-red-500 dark:border-red-400' : ''}"
                     required
+                    aria-describedby={errors.password ? 'password-error' : undefined}
+                    aria-invalid={!!errors.password}
                   />
                   <button
                     type="button"
                     onclick={togglePasswordVisibility}
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {#if showPassword}
-                      <EyeOff class="w-4 h-4" />
+                      <EyeOff class="w-4 h-4" aria-hidden="true" />
                     {:else}
-                      <Eye class="w-4 h-4" />
+                      <Eye class="w-4 h-4" aria-hidden="true" />
                     {/if}
                   </button>
                 </div>
+                {#if errors.password}
+                  <p id="password-error" class="text-sm text-red-600 dark:text-red-400" role="alert">{errors.password}</p>
+                {/if}
               </div>
 
               <div class="flex items-center justify-between">
                 <label class="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
+                    bind:checked={rememberMe}
                     class="w-4 h-4 text-blue-600 dark:text-purple-600 bg-gray-100 dark:bg-slate-700 border-gray-300 dark:border-slate-600 rounded focus:ring-blue-500 dark:focus:ring-purple-500 transition-colors duration-300"
                   />
                   <span class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">Remember me</span>
@@ -120,14 +189,15 @@
                 class="w-full bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
                 size="lg"
                 disabled={isLoading}
-                onclick={() => goto("/dashboard")}
+                aria-describedby={isLoading ? 'loading-status' : undefined}
               >
                 {#if isLoading}
-                  <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" aria-hidden="true"></div>
+                  <span id="loading-status" class="sr-only">Signing in, please wait...</span>
                   Signing in...
                 {:else}
                   Sign in
-                  <ArrowRight class="w-4 h-4 ml-2" />
+                  <ArrowRight class="w-4 h-4 ml-2" aria-hidden="true" />
                 {/if}
               </Button>
             </form>
@@ -147,8 +217,9 @@
                 variant="outline"
                 class="w-full border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
                 onclick={() => signIn("google", { redirectTo: "/dashboard" })}
+                aria-label="Sign in with Google"
               >
-                <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" aria-hidden="true">
                   <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                   <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -185,7 +256,7 @@
         </Card>
       </div>
     </div>
-  </section>
+  </main>
 
   <Footer />
 </div>

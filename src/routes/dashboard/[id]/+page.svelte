@@ -4,7 +4,6 @@
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
-
   // Lucide Icons
   import ArrowUpRight from "lucide-svelte/icons/arrow-up-right";
   import ArrowDownRight from "lucide-svelte/icons/arrow-down-right";
@@ -13,7 +12,6 @@
   import CheckCircle from "lucide-svelte/icons/check-circle";
   import Clock from "lucide-svelte/icons/clock";
   import AlertCircle from "lucide-svelte/icons/alert-circle";
-
   // Placeholder Data
   import { stats, recentOrders, activeDrivers } from "$lib/placeholder_data";
 
@@ -47,11 +45,11 @@
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
   <HeaderNav>
-    <a href="/dashboard" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Dashboard</a>
-    <a href="/dashboard/orders" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
-    <a href="/dashboard/employees" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Employees</a>
-    <a href="/dashboard/tracking" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Live Tracking</a>
-    <a href="/dashboard/analytics" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Analytics</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}`} role="menuitem" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Dashboard</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/orders`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/employees`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Employees</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/tracking`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Live Tracking</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/analytics`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Analytics</a>
   </HeaderNav>
 
   <main class="py-8">
@@ -115,7 +113,12 @@
                   Latest orders from your customers
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm" class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300">
+              <Button 
+                href={`/dashboard/${data.selectedBusiness?.id}/orders`}
+                variant="outline" 
+                size="sm" 
+                class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
+                >
                 View all
               </Button>
             </CardHeader>
