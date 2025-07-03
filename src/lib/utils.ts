@@ -20,6 +20,12 @@ export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?:
 export function clickOutside(callback: () => void) {
   return (element: Element) => {
 		const handleClick = (event: Event) => {
+			// Don't trigger if clicking on an input, textarea, or select
+			const target = event.target as HTMLElement;
+			if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
+				return;
+			}
+			
 			if (!element.contains(<Node>event.target)) {
 				callback();
 			}

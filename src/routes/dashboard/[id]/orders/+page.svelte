@@ -1,4 +1,6 @@
 <script lang="ts">
+  // Types
+  import type { Order } from "$lib/models/Order";
   // Components
   import { HeaderNav, Footer } from "$lib/components";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
@@ -18,10 +20,9 @@
   import Eye from "lucide-svelte/icons/eye";
   import Edit from "lucide-svelte/icons/edit";
   import Trash2 from "lucide-svelte/icons/trash-2";
-  // Placeholder Data
-  import { orders } from "$lib/placeholder_data";
 
-  const { data } = $props();
+  const { data } = $props<{ orders: Order[] }>();
+  //$inspect(data);
 
   let searchQuery = $state("");
   let selectedStatus = $state("all");
@@ -40,11 +41,11 @@
 
   // TODO: Add filter by time
   const filteredOrders = $derived(() => {
-    return orders.filter(order => {
+    return data.orders.filter((order: Order) => {
       const matchesSearch = searchQuery === "" || 
         order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.customer.phone.includes(searchQuery);
+        order.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        order.customerPhone?.includes(searchQuery);
       
       const matchesStatus = selectedStatus === "all" || order.status === selectedStatus;
       
@@ -105,11 +106,6 @@
     });
   }
 
-  function handleCreateOrder() {
-    // Add create order logic
-    console.log("Create new order");
-  }
-
   function handleViewOrder(orderId: string) {
     // Add view order logic
     console.log("View order:", orderId);
@@ -160,7 +156,7 @@
           </p>
         </div>
         <Button 
-          onclick={handleCreateOrder}
+          href={`/dashboard/${data.selectedBusiness?.id}/orders/create`}
           class="mt-4 sm:mt-0 bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
         >
           <Plus class="w-4 h-4 mr-2" />
@@ -209,7 +205,7 @@
       <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300">
         <CardHeader>
           <CardTitle class="text-xl dark:text-white transition-colors duration-300">
-            All Orders ({filteredOrders.length})
+            All Orders ({filteredOrders().length})
           </CardTitle>
           <CardDescription class="dark:text-gray-300 transition-colors duration-300">
             Complete list of delivery orders
@@ -239,25 +235,25 @@
                           <Package class="w-4 h-4 text-blue-600 dark:text-purple-400 transition-colors duration-300" />
                         </div>
                         <div>
-                          <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">{order.id}</p>
-                          <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{formatDate(order.orderTime)}</p>
+                          <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">#{order.number}</p>
+                          <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{formatDate(order.createdAt?.toString() || '')}</p>
                         </div>
                       </div>
                     </td>
                     <td class="py-4 px-4">
                       <div>
-                        <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">{order.customer.name}</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{order.customer.phone}</p>
+                        <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">{order.customerName}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{order.customerPhone}</p>
                       </div>
                     </td>
                     <td class="py-4 px-4">
-                      <p class="text-sm text-gray-900 dark:text-white max-w-xs truncate transition-colors duration-300" title={order.items}>
-                        {order.items}
+                      <p class="text-sm text-gray-900 dark:text-white max-w-xs truncate transition-colors duration-300" title={order.orderDetails}>
+                        {order.orderDetails}
                       </p>
                       <div class="flex items-center space-x-1 mt-1">
                         <MapPin class="w-3 h-3 text-gray-400" />
                         <p class="text-xs text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                          {order.estimatedTime}
+                          {order.estimatedDeliveryTime ? formatTime(order.estimatedDeliveryTime.toString()) : 'Not set'}
                         </p>
                       </div>
                     </td>
@@ -267,23 +263,23 @@
                       </Badge>
                     </td>
                     <td class="py-4 px-4">
-                      {#if order.driver}
+                      {#if order.assignedDriverId}
                         <div class="flex items-center space-x-2">
                           <User class="w-4 h-4 text-gray-400" />
-                          <span class="text-sm text-gray-900 dark:text-white transition-colors duration-300">{order.driver}</span>
+                          <span class="text-sm text-gray-900 dark:text-white transition-colors duration-300">{order.assignedDriverId}</span>
                         </div>
                       {:else}
                         <span class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Unassigned</span>
                       {/if}
                     </td>
                     <td class="py-4 px-4">
-                      <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">{order.amount}</p>
+                      <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">${order.totalAmount?.toFixed(2) || '0.00'}</p>
                     </td>
                     <td class="py-4 px-4">
                       <div class="flex items-center space-x-1">
                         <Clock class="w-3 h-3 text-gray-400" />
                         <span class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                          {formatTime(order.deliveryTime) || "Pending"}
+                          {order.deliveredAt ? formatTime(order.deliveredAt.toString()) : "Pending"}
                         </span>
                       </div>
                     </td>

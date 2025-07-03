@@ -25,7 +25,7 @@ export const GET: LayoutServerLoad = async ({ locals, url }) => {
       `SELECT * FROM business 
         WHERE id = type::thing('business', $businessId)
         AND (ownerId = type::thing('user', $ownerId)
-        OR id IN (SELECT businessId FROM employees WHERE userId = type::thing('user', $ownerId)))`,
+        OR id IN (SELECT businessId FROM employee WHERE userId = type::thing('user', $ownerId)))`,
       { businessId, ownerId: session.user.id }
     );
 
@@ -44,7 +44,7 @@ export const GET: LayoutServerLoad = async ({ locals, url }) => {
     const result = await db.query(
       `SELECT * FROM business 
         WHERE ownerId = type::thing('user', $ownerId)
-        OR id IN (SELECT businessId FROM employees WHERE userId = type::thing('user', $ownerId))`,
+        OR id IN (SELECT businessId FROM employee WHERE userId = type::thing('user', $ownerId))`,
       { ownerId: session.user.id }
     );
 
@@ -123,7 +123,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     }
 
     await db.query(`
-      CREATE employees SET 
+      CREATE employee SET 
         userId = type::thing('user', $userId),
         businessId = $businessId,
         role = $role,
@@ -145,6 +145,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   }
 };
 
+// FIXME: Data retention: Soft deletes
 export const DELETE: RequestHandler = async ({ url, locals }) => {
   const db = await clientPromise;
 
@@ -157,6 +158,12 @@ export const DELETE: RequestHandler = async ({ url, locals }) => {
   `, { businessId });
 
   if (!business || business.length === 0) throw error(404, 'Business not found');
+
+  const employees = await db.query(`
+    DELETE FROM employee WHERE businessId = type::thing('business', $businessId) RETURN BEFORE
+  `, { businessId });
+
+  if (!employees || employees.length === 0) throw error(404, 'Employees not found');
 
   await db.query(`
     DELETE ONLY business WHERE id = type::thing('business', $businessId) RETURN BEFORE

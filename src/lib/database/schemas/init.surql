@@ -1,6 +1,3 @@
--- Business Setup Schema for Delivery SaaS
--- This schema defines the data structure for business profiles and related entities
-
 -- ============================================================================
 -- AUTH TABLES (from init.surql)
 -- ============================================================================
@@ -143,7 +140,7 @@ DEFINE INDEX ownerId ON business COLUMNS ownerId;
 -- ============================================================================
 -- EMPLOYEE TABLE
 -- ============================================================================
-DEFINE TABLE employees SCHEMAFULL
+DEFINE TABLE employee SCHEMAFULL
     PERMISSIONS
         FOR select
             WHERE userId = $auth.id 
@@ -152,76 +149,86 @@ DEFINE TABLE employees SCHEMAFULL
             WHERE $auth.id IN (SELECT ownerId FROM business WHERE id = businessId);
 
 -- Business-specific employee fields
-DEFINE FIELD role ON employees TYPE string ASSERT $value INSIDE ["owner", "dispatcher", "employee"];
-DEFINE FIELD status ON employees TYPE string ASSERT $value INSIDE ["active", "inactive", "suspended"];
+DEFINE FIELD role ON employee TYPE string ASSERT $value INSIDE ["owner", "dispatcher", "employee"];
+DEFINE FIELD status ON employee TYPE string ASSERT $value INSIDE ["active", "inactive", "suspended"];
 
 -- Relationships
-DEFINE FIELD userId ON employees TYPE record<user> ASSERT $value != NONE;
-DEFINE FIELD businessId ON employees TYPE record<business> ASSERT $value != NONE;
+DEFINE FIELD userId ON employee TYPE record<user> ASSERT $value != NONE;
+DEFINE FIELD businessId ON employee TYPE record<business> ASSERT $value != NONE;
 
 -- Timestamps
-DEFINE FIELD createdAt ON employees TYPE datetime DEFAULT time::now();
-DEFINE FIELD updatedAt ON employees TYPE datetime DEFAULT time::now();
+DEFINE FIELD createdAt ON employee TYPE datetime DEFAULT time::now();
+DEFINE FIELD updatedAt ON employee TYPE datetime DEFAULT time::now();
 
 -- Indexes
-DEFINE INDEX businessId ON employees COLUMNS businessId;
-DEFINE INDEX userId ON employees COLUMNS userId;
-DEFINE INDEX role ON employees COLUMNS role;
-DEFINE INDEX status ON employees COLUMNS status;
+DEFINE INDEX businessId ON employee COLUMNS businessId;
+DEFINE INDEX userId ON employee COLUMNS userId;
+DEFINE INDEX role ON employee COLUMNS role;
+DEFINE INDEX status ON employee COLUMNS status;
 
 -- ============================================================================
 -- ORDERS TABLE
 -- ============================================================================
-DEFINE TABLE orders SCHEMAFULL
+DEFINE TABLE order SCHEMAFULL
     PERMISSIONS
         FOR select
-            WHERE businessId IN (SELECT businessId FROM employees WHERE userId = $auth.id)
+            WHERE customerId = $auth.id
+            OR businessId IN (SELECT businessId FROM employees WHERE userId = $auth.id)
             OR $auth.id IN (SELECT ownerId FROM business WHERE id = businessId)
         FOR create, update, delete
             WHERE businessId IN (SELECT businessId FROM employees WHERE userId = $auth.id)
             OR $auth.id IN (SELECT ownerId FROM business WHERE id = businessId);
 
+-- Order table events
+DEFINE EVENT order_create ON order
+    WHEN $event = "CREATE"
+    THEN (
+        UPDATE order SET number = count(SELECT id FROM order) + 1 WHERE id = $after.id
+    );
+
 -- Order basic information
-DEFINE FIELD orderNumber ON orders TYPE string ASSERT $value != NONE AND $value != "";
-DEFINE FIELD status ON orders TYPE string ASSERT $value INSIDE ["pending", "confirmed", "preparing", "ready", "out_for_delivery", "delivered", "cancelled"];
-DEFINE FIELD totalAmount ON orders TYPE decimal ASSERT $value >= 0;
+DEFINE FIELD id ON order TYPE string ASSERT $value != NONE AND $value != "";
+DEFINE FIELD number ON order TYPE int DEFAULT 0;
+DEFINE FIELD status ON order TYPE string ASSERT $value INSIDE ["pending", "confirmed", "preparing", "ready", "out_for_delivery", "delivered", "cancelled"];
+DEFINE FIELD totalAmount ON order TYPE decimal ASSERT $value >= 0;
 
 -- Customer information
-DEFINE FIELD customerName ON orders TYPE string ASSERT $value != NONE AND $value != "";
-DEFINE FIELD customerPhone ON orders TYPE string ASSERT $value != NONE AND $value != "";
-DEFINE FIELD customerEmail ON orders TYPE option<string>;
+DEFINE FIELD customerId ON order TYPE option<record<user>>;
+DEFINE FIELD customerName ON order TYPE option<string>;
+DEFINE FIELD customerPhone ON order TYPE option<string>;
+DEFINE FIELD customerEmail ON order TYPE option<string>;
 
 -- Delivery information
-DEFINE FIELD deliveryAddress ON orders TYPE object ASSERT $value != NONE;
-DEFINE FIELD deliveryAddress.street ON orders TYPE string ASSERT $value != NONE AND $value != "";
-DEFINE FIELD deliveryAddress.city ON orders TYPE string ASSERT $value != NONE AND $value != "";
-DEFINE FIELD deliveryAddress.stateProvince ON orders TYPE string;
-DEFINE FIELD deliveryAddress.zipPostalCode ON orders TYPE string ASSERT $value != NONE AND $value != "";
-DEFINE FIELD deliveryAddress.country ON orders TYPE string ASSERT $value != NONE AND $value != "";
-DEFINE FIELD deliveryAddress.instructions ON orders TYPE option<string>;
+DEFINE FIELD deliveryAddress ON order TYPE object ASSERT $value != NONE;
+DEFINE FIELD deliveryAddress.street ON order TYPE string ASSERT $value != NONE AND $value != "";
+DEFINE FIELD deliveryAddress.city ON order TYPE string ASSERT $value != NONE AND $value != "";
+DEFINE FIELD deliveryAddress.stateProvince ON order TYPE string;
+DEFINE FIELD deliveryAddress.zipPostalCode ON order TYPE string ASSERT $value != NONE AND $value != "";
+DEFINE FIELD deliveryAddress.country ON order TYPE string ASSERT $value != NONE AND $value != "";
+DEFINE FIELD deliveryAddress.instructions ON order TYPE option<string>;
 
 -- Order details
-DEFINE FIELD orderDetails ON orders TYPE string ASSERT $value != NONE;
-DEFINE FIELD specialInstructions ON orders TYPE option<string>;
-DEFINE FIELD estimatedDeliveryTime ON orders TYPE option<datetime>;
+DEFINE FIELD orderDetails ON order TYPE string ASSERT $value != NONE;
+DEFINE FIELD specialInstructions ON order TYPE option<string>;
+DEFINE FIELD estimatedDeliveryTime ON order TYPE option<datetime>;
 
 -- Relationships
-DEFINE FIELD businessId ON orders TYPE record<business> ASSERT $value != NONE;
-DEFINE FIELD assignedDriverId ON orders TYPE option<record<user>>;
+DEFINE FIELD businessId ON order TYPE record<business> ASSERT $value != NONE;
+DEFINE FIELD assignedDriverId ON order TYPE option<record<user>>;
 
 -- Timestamps
-DEFINE FIELD createdAt ON orders TYPE datetime DEFAULT time::now();
-DEFINE FIELD updatedAt ON orders TYPE datetime DEFAULT time::now();
-DEFINE FIELD confirmedAt ON orders TYPE option<datetime>;
-DEFINE FIELD deliveredAt ON orders TYPE option<datetime>;
+DEFINE FIELD createdAt ON order TYPE datetime DEFAULT time::now();
+DEFINE FIELD updatedAt ON order TYPE datetime DEFAULT time::now();
+DEFINE FIELD confirmedAt ON order TYPE option<datetime>;
+DEFINE FIELD deliveredAt ON order TYPE option<datetime>;
 
 -- Indexes
-DEFINE INDEX businessId ON orders COLUMNS businessId;
-DEFINE INDEX orderNumber ON orders COLUMNS orderNumber;
-DEFINE INDEX status ON orders COLUMNS status;
-DEFINE INDEX customerPhone ON orders COLUMNS customerPhone;
-DEFINE INDEX createdAt ON orders COLUMNS createdAt;
-DEFINE INDEX assignedDriverId ON orders COLUMNS assignedDriverId;
+DEFINE INDEX businessId ON order COLUMNS businessId;
+DEFINE INDEX orderNumber ON order COLUMNS orderNumber;
+DEFINE INDEX status ON order COLUMNS status;
+DEFINE INDEX customerPhone ON order COLUMNS customerPhone;
+DEFINE INDEX createdAt ON order COLUMNS createdAt;
+DEFINE INDEX assignedDriverId ON order COLUMNS assignedDriverId;
 
 -- ============================================================================
 -- FUNCTIONS
@@ -259,4 +266,4 @@ DEFINE FUNCTION fn::is_business_open($business_id: record<business>) {
     WHERE operatingHours[$current_day].enabled = true 
     AND $current_time_str >= operatingHours[$current_day].open 
     AND $current_time_str <= operatingHours[$current_day].close;
-}; 
+};
