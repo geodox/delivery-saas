@@ -1,53 +1,66 @@
-import { json, error, type RequestHandler } from '@sveltejs/kit';
+// Types
+import type { LayoutServerLoad } from '../../$types';
 import { Business } from '$lib/models/Business';
-import { Address } from '$lib/models/Address';
-import { DeliverySettings } from '$lib/models/DeliverySettings';
-import { OperatingHours } from '$lib/models/OperatingHours';
-import { clientPromise } from '$lib/surrealdb';
 import { Employee } from '$lib/models/Employee';
+// Svelte
+import { json, error, type RequestHandler } from '@sveltejs/kit';
+// SurrealDB
+import { clientPromise } from '$lib/surrealdb';
 
 // Helper to get session from locals
 async function getSession(locals: App.Locals) {
-  if (typeof locals.auth === 'function') {
-    return await locals.auth();
-  }
-  throw error(401, 'Authentication required');
+  const session = await locals.auth();
+  if (!session?.user) throw error(401, 'Authentication required');
+  return session;
 }
 
-export const GET: RequestHandler = async ({ locals }) => {
+export const GET: LayoutServerLoad = async ({ locals, url }) => {
   const session = await getSession(locals);
-
-  if (!session?.user) throw error(401, 'Not authenticated');
-
   const db = await clientPromise;
-  const result = await db.query(
-    `SELECT * FROM business 
-      WHERE ownerId = type::thing('user', $ownerId)
-      OR id IN (SELECT businessId FROM employees WHERE userId = type::thing('user', $ownerId))`,
-    { ownerId: session.user.id }
-  );
 
-  const businessesData = result[0] as any[];
-  const businesses = businessesData.map((businessData: any) => new Business({
-    id: businessData.id?.id || businessData.id,
-    name: businessData.name || '',
-    description: businessData.description || '',
-    website: businessData.website || null,
-    phone: businessData.phone || null,
-    address: businessData.address ? new Address(businessData.address) : new Address(),
-    delivery: businessData.delivery ? new DeliverySettings(businessData.delivery) : new DeliverySettings(),
-    operatingHours: businessData.operatingHours ? new OperatingHours(businessData.operatingHours) : new OperatingHours(),
-    ownerId: businessData.ownerId?.id || businessData.ownerId,
-    createdAt: businessData.createdAt || null,
-    updatedAt: businessData.updatedAt || null,
-  }));
-  
-  return json(businesses.map(b => b.toJSON()));
+  const businessId = url.searchParams.get('id');
+  if (businessId) {
+    // Return single business if ID is provided
+    const result = await db.query(
+      `SELECT * FROM business 
+        WHERE id = type::thing('business', $businessId)
+        AND (ownerId = type::thing('user', $ownerId)
+        OR id IN (SELECT businessId FROM employees WHERE userId = type::thing('user', $ownerId)))`,
+      { businessId, ownerId: session.user.id }
+    );
+
+    const businessData = result[0] as any[];
+    if (!businessData || businessData.length === 0) {
+      throw error(404, 'Business not found or access denied');
+    }
+
+    const businessRecord = businessData[0];
+    businessRecord.id = businessRecord.id.id; // Handle RecordId object
+    const business = new Business(businessRecord);
+    
+    return json(business.toJSON());
+  } else {
+    // Return all businesses for the user
+    const result = await db.query(
+      `SELECT * FROM business 
+        WHERE ownerId = type::thing('user', $ownerId)
+        OR id IN (SELECT businessId FROM employees WHERE userId = type::thing('user', $ownerId))`,
+      { ownerId: session.user.id }
+    );
+
+    const businessesData = result[0] as any[];
+    const businesses = businessesData.map((businessData: any) => {
+      businessData.id = businessData.id.id; // Handle RecordId object
+      const business = new Business(businessData);
+      return business;
+    });
+    
+    return json(businesses.map(b => b.toJSON()));
+  }
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   const session = await getSession(locals);
-  if (!session?.user) throw error(401, 'Not authenticated');
 
   let businessId: string | undefined;
   try {
@@ -119,6 +132,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         updatedAt = time::now()
     `, employee.toJSON());
 
+    businessRecord.id = businessRecord.id.id;
     businessId = businessRecord.id;
 
     return json({ businessId, business: businessRecord });
@@ -129,4 +143,24 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       details: err instanceof Error ? err.message : 'Unknown error'
     }, { status: 500 });
   }
+};
+
+export const DELETE: RequestHandler = async ({ url, locals }) => {
+  const db = await clientPromise;
+
+  const businessId = url.searchParams.get('id');
+  
+  if (!businessId) throw error(400, 'Business ID is required');
+
+  const business = await db.query(`
+    SELECT * FROM business WHERE id = type::thing('business', $businessId)
+  `, { businessId });
+
+  if (!business || business.length === 0) throw error(404, 'Business not found');
+
+  await db.query(`
+    DELETE ONLY business WHERE id = type::thing('business', $businessId) RETURN BEFORE
+  `, { businessId });
+
+  return json({ message: 'Business deleted successfully' });
 };

@@ -128,8 +128,6 @@
     const mobileMenuItems = document.querySelectorAll(`#${mobileMenuId} [role="menuitem"]`);
     const totalItems = mobileMenuItems.length;
 
-    console.log(totalItems, focusedMobileMenuItemIndex);
-
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();

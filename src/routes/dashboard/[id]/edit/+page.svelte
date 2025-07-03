@@ -18,6 +18,7 @@
   import ArrowLeft from "lucide-svelte/icons/arrow-left";
   import Clock from "lucide-svelte/icons/clock";
   import Truck from "lucide-svelte/icons/truck";
+  import Trash from "lucide-svelte/icons/trash";
 
   let { data } = $props<{
     data: {
@@ -187,6 +188,18 @@
       case 'sunday':
         business.operatingHours.sunday.enabled = !business.operatingHours.sunday.enabled;
         break;
+    }
+  }
+
+  async function deleteBusiness() {
+    let confirmed = confirm("Are you sure you want to delete this business? This action cannot be undone.");
+    if (confirmed) {
+      let response = await fetch(`/api/businesses/?id=${data.selectedBusiness.id}`, { method: 'DELETE' });
+        if (response.ok) {
+          goto(`/dashboard`);
+        } else {
+          console.error("Failed to delete business");
+      }
     }
   }
 </script>
@@ -482,27 +495,36 @@
         </Card>
 
         <!-- Action Buttons -->
-        <div class="flex justify-end space-x-3 pt-6">
-          <Button 
-            variant="outline" 
-            onclick={cancelEdit}
-            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+        <div class="flex justify-between pt-6">
+          <Button
+            variant="destructive"
+            onclick={deleteBusiness}
           >
-            Cancel
+            <Trash class="w-4 h-4 mr-2" />
+            Delete Business
           </Button>
-          <Button 
-            onclick={saveBusiness}
-            disabled={isSaving}
-            class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700"
-          >
-            {#if isSaving}
-              <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-              Saving...
-            {:else}
-              <Save class="w-4 h-4 mr-2" />
-              Save Changes
-            {/if}
-          </Button>
+          <div class="flex space-x-3">
+            <Button 
+              variant="outline" 
+              onclick={cancelEdit}
+              class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onclick={saveBusiness}
+              disabled={isSaving}
+              class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700"
+            >
+              {#if isSaving}
+                <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Saving...
+              {:else}
+                <Save class="w-4 h-4 mr-2" />
+                Save Changes
+              {/if}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

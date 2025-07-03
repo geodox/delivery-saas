@@ -90,7 +90,6 @@
     isEditingProfile = false;
     
     // Show success message (you could add a toast notification here)
-    console.log('Profile updated successfully');
   }
 
   function cancelEdit() {

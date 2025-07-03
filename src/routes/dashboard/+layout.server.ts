@@ -18,8 +18,8 @@ export const load: LayoutServerLoad = async ({ fetch, params, locals }) => {
 
   // Get businesses for user
   const businesses: Business[] = await fetch('/api/businesses')
-  .then(res => res.json())
-  .then(data => data.map((business: any) => new Business(business)));
+    .then(res => res.json())
+    .then(data => data.map((business: any) => new Business(business)));
 
   // FIXME: Redirect to /dashboard?id=...?
   // Get current business from URL params or default to first business

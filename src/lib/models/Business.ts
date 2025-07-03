@@ -1,3 +1,4 @@
+import { RecordId } from 'surrealdb';
 import { Address } from './Address';
 import { DeliverySettings } from './DeliverySettings';
 import { OperatingHours } from './OperatingHours';
