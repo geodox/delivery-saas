@@ -24,6 +24,7 @@
   const totalSteps = 4;
   let isLoading = $state(false);
   let formError = $state<object | null>(null);
+  let formErrorDetails = $state<Array<string> | null>(null);
 
   // Step 1: Business Information
   let name = $state("");
@@ -107,6 +108,7 @@
   $effect(() => {
     if (page.form?.error) {
       formError = page.form.error;
+      formErrorDetails = page.form?.details || null;
       isLoading = false;
     }
   });
@@ -117,7 +119,6 @@
         return name && description;
       case 2:
         const addressValid = streetAddress && city && zipPostalCode && country;
-        // If country has predefined provinces, require province selection
         if (country && countryProvinces[country]) {
           return addressValid && stateProvince;
         }
@@ -250,6 +251,7 @@
               return async ({ result, update }) => {
                 if (result.type === 'failure') {
                   formError = result.data?.error || 'An error occurred';
+                  formErrorDetails = result.data?.details as Array<string> || null;
                   isLoading = false;
                   await update();
                 } else {
@@ -278,7 +280,12 @@
               <!-- Error Display -->
               {#if formError}
                 <div class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p class="text-red-800 dark:text-red-200 text-sm">{formError}</p>
+                  <p class="text-red-800 dark:text-red-200 text-sm font-medium">{formError}</p>
+                  {#if formErrorDetails}
+                  {#each formErrorDetails as errorDetail}
+                    <p class="text-red-700 dark:text-red-300 text-xs mt-2 opacity-90">{errorDetail}</p>
+                    {/each}
+                  {/if}
                 </div>
               {/if}
 

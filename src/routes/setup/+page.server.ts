@@ -1,6 +1,6 @@
 // Types
 import type { Actions } from './$types';
-
+import { Business } from '$lib/models';
 // Svelte
 import { error, fail, redirect } from '@sveltejs/kit';
 
@@ -9,17 +9,8 @@ export const actions: Actions = {
     let businessId: string | undefined;
     try {
       const formData = await request.formData();
-      // Convert formData to plain object
-      const data: Record<string, any> = {};
-      for (const [key, value] of formData.entries()) {
-        data[key] = value;
-      }
-      // If operatingHours is a stringified JSON, parse it
-      if (typeof data.operatingHours === 'string') {
-        try {
-          data.operatingHours = JSON.parse(data.operatingHours);
-        } catch {}
-      }
+      const business = Business.fromFormData(formData);
+      const data = business.toJSON();
       // POST to API endpoint
       const res = await fetch('/api/businesses', {
         method: 'POST',
