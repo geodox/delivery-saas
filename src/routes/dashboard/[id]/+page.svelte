@@ -57,10 +57,10 @@
       <!-- Page Header -->
       <div class="mb-8 flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
+          <h1 class="text-3xl font-bold text-foreground transition-colors duration-300">
             {data.selectedBusiness?.name} - Dashboard
           </h1>
-          <p class="text-gray-600 dark:text-gray-300 mt-2 transition-colors duration-300">
+          <p class="text-muted-foreground mt-2 transition-colors duration-300">
             Welcome back! Here's what's happening with your deliveries today.
           </p>
         </div>
@@ -76,10 +76,10 @@
             <CardContent class="p-6">
               <div class="flex items-center justify-between">
                 <div class="space-y-2">
-                  <p class="text-sm font-medium text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                  <p class="text-sm font-medium text-muted-foreground transition-colors duration-300">
                     {stat.title}
                   </p>
-                  <p class="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
+                  <p class="text-2xl font-bold text-foreground transition-colors duration-300">
                     {stat.value}
                   </p>
                   <div class="flex items-center space-x-1">

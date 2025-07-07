@@ -29,21 +29,21 @@
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           <div class="space-y-8">
             <div class="space-y-4">
-              <h1 id="hero-heading" class="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight transition-colors duration-300">
+              <h1 id="hero-heading" class="text-4xl lg:text-6xl font-bold text-foreground leading-tight transition-colors duration-300">
                 Streamline Your Delivery Operations
               </h1>
-              <p class="text-xl text-gray-600 dark:text-gray-300 leading-relaxed transition-colors duration-300">
+              <p class="text-xl text-muted-foreground leading-relaxed transition-colors duration-300">
                 Manage orders, drivers, and deliveries all in one place with our powerful 
                 delivery management platform.
               </p>
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300">
+              <Button size="lg" class="bg-primary hover:bg-primary/90 text-primary-foreground transition-colors duration-300">
                 Start free trial
                 <ArrowRight class="w-4 h-4 ml-2" aria-hidden="true" />
               </Button>
-              <Button variant="outline" size="lg" class="border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors duration-300">
+              <Button variant="outline" size="lg" class="border-border hover:bg-accent hover:text-accent-foreground transition-colors duration-300">
                 See it in action
               </Button>
             </div>
@@ -98,10 +98,10 @@
     <section id="features" class="py-20" aria-labelledby="features-heading">
       <div class="container mx-auto px-4">
         <div class="text-center space-y-4 mb-16">
-          <h2 id="features-heading" class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
+          <h2 id="features-heading" class="text-3xl lg:text-4xl font-bold text-foreground transition-colors duration-300">
             Everything You Need to Manage Deliveries
           </h2>
-          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-300">
+          <p class="text-xl text-muted-foreground max-w-3xl mx-auto transition-colors duration-300">
             Our platform offers a complete suite of tools to streamline your delivery operations, 
             from order management to driver tracking and customer notifications.
           </p>
@@ -162,8 +162,8 @@
     <section id="pricing" class="py-20" aria-labelledby="pricing-heading">
       <div class="container mx-auto px-4">
         <div class="text-center space-y-4 mb-16">
-          <h2 id="pricing-heading" class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white transition-colors duration-300">Simple, Transparent Pricing</h2>
-          <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300">
+          <h2 id="pricing-heading" class="text-3xl lg:text-4xl font-bold text-foreground transition-colors duration-300">Simple, Transparent Pricing</h2>
+          <p class="text-xl text-muted-foreground max-w-2xl mx-auto transition-colors duration-300">
             Choose the plan that fits your business needs, with no hidden fees or long-term contracts.
           </p>
         </div>

@@ -1,14 +1,17 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+  // Auth
   import { signIn } from "@auth/sveltekit/client";
-
+  // Components
   import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Separator } from "$lib/components/ui/separator";
-  
+  import { Alert, AlertDescription } from "$lib/components/ui/alert";
+  import { Checkbox } from "$lib/components/ui/checkbox";
+  // Icons
   import Eye from "lucide-svelte/icons/eye";
   import EyeOff from "lucide-svelte/icons/eye-off";
   import Mail from "lucide-svelte/icons/mail";
@@ -100,12 +103,10 @@
           <CardContent class="space-y-6">
             <!-- Error Alert -->
             {#if errors.general}
-              <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4" role="alert" aria-live="polite">
-                <div class="flex items-center space-x-2">
-                  <AlertCircle class="w-5 h-5 text-red-500 dark:text-red-400" aria-hidden="true" />
-                  <p class="text-sm text-red-700 dark:text-red-300">{errors.general}</p>
-                </div>
-              </div>
+              <Alert variant="destructive">
+                <AlertCircle class="h-4 w-4" />
+                <AlertDescription>{errors.general}</AlertDescription>
+              </Alert>
             {/if}
 
             <form onsubmit={handleLogin} class="space-y-4" novalidate>
@@ -121,14 +122,14 @@
                     bind:value={email}
                     oninput={handleEmailInput}
                     placeholder="Enter your email"
-                    class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300 {errors.email ? 'border-red-500 dark:border-red-400' : ''}"
+                    class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300 {errors.email ? 'border-destructive focus:ring-destructive/20' : ''}"
                     required
                     aria-describedby={errors.email ? 'email-error' : undefined}
                     aria-invalid={!!errors.email}
                   />
                 </div>
                 {#if errors.email}
-                  <p id="email-error" class="text-sm text-red-600 dark:text-red-400" role="alert">{errors.email}</p>
+                  <p id="email-error" class="text-sm text-destructive font-medium" role="alert">{errors.email}</p>
                 {/if}
               </div>
 
@@ -144,7 +145,7 @@
                     bind:value={password}
                     oninput={handlePasswordInput}
                     placeholder="Enter your password"
-                    class="pl-10 pr-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300 {errors.password ? 'border-red-500 dark:border-red-400' : ''}"
+                    class="pl-10 pr-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300 {errors.password ? 'border-destructive focus:ring-destructive/20' : ''}"
                     required
                     aria-describedby={errors.password ? 'password-error' : undefined}
                     aria-invalid={!!errors.password}
@@ -163,19 +164,17 @@
                   </button>
                 </div>
                 {#if errors.password}
-                  <p id="password-error" class="text-sm text-red-600 dark:text-red-400" role="alert">{errors.password}</p>
+                  <p id="password-error" class="text-sm text-destructive font-medium" role="alert">{errors.password}</p>
                 {/if}
               </div>
 
               <div class="flex items-center justify-between">
-                <label class="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    bind:checked={rememberMe}
-                    class="w-4 h-4 text-blue-600 dark:text-purple-600 bg-gray-100 dark:bg-slate-700 border-gray-300 dark:border-slate-600 rounded focus:ring-blue-500 dark:focus:ring-purple-500 transition-colors duration-300"
-                  />
-                  <span class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">Remember me</span>
-                </label>
+                <div class="flex items-center space-x-2">
+                  <Checkbox id="remember" bind:checked={rememberMe} />
+                  <Label for="remember" class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">
+                    Remember me
+                  </Label>
+                </div>
                 <a
                   href="/forgot-password"
                   class="text-sm text-blue-600 dark:text-purple-400 hover:text-blue-700 dark:hover:text-purple-300 transition-colors duration-300"

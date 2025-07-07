@@ -11,6 +11,8 @@
   import { Label } from "$lib/components/ui/label";
   import { Textarea } from "$lib/components/ui/textarea";
   import { Badge } from "$lib/components/ui/badge";
+  import { Checkbox } from "$lib/components/ui/checkbox";
+  import { Select, SelectContent, SelectItem, SelectTrigger } from "$lib/components/ui/select";
   // Lucide Icons
   import Building from "lucide-svelte/icons/building";
   import MapPin from "lucide-svelte/icons/map-pin";
@@ -19,6 +21,7 @@
   import Clock from "lucide-svelte/icons/clock";
   import Truck from "lucide-svelte/icons/truck";
   import Trash from "lucide-svelte/icons/trash";
+    import SelectGroup from "$lib/components/ui/select/select-group.svelte";
 
   let { data } = $props<{
     data: {
@@ -210,180 +213,176 @@
 
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
   <HeaderNav>
-    <a href={`/dashboard/${data.selectedBusiness.id}`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
-    <a href="/account" role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Account</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}`} role="menuitem" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Dashboard</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/orders`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/employees`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Employees</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/tracking`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Live Tracking</a>
+    <a href={`/dashboard/${data.selectedBusiness?.id}/analytics`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Analytics</a>
   </HeaderNav>
 
-  <!-- Main Content -->
-  <div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
+  <main class="py-8">
+    <div class="container mx-auto px-4 max-w-4xl">
       <!-- Page Header -->
-      <div class="mb-8">
-        <div class="flex items-center space-x-4 mb-4">
+      <div class="mb-8 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
           <Button 
-            href={`/dashboard/${data.selectedBusiness.id}`}
+            href={`/dashboard/${data.selectedBusiness?.id}`}
             variant="outline" 
             size="sm"
-            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
           >
             <ArrowLeft class="w-4 h-4 mr-2" />
             Back to Dashboard
           </Button>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
+              Edit Business
+            </h1>
+            <p class="text-gray-600 dark:text-gray-300 mt-1 transition-colors duration-300">
+              Update your business information and settings
+            </p>
+          </div>
         </div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Edit Business</h1>
-        <p class="text-gray-600 dark:text-gray-300">Update your business information and settings</p>
       </div>
 
+      <!-- Form -->
       <div class="space-y-6">
         <!-- Basic Information -->
         <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
           <CardHeader>
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 bg-blue-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                <Building class="w-5 h-5 text-blue-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <CardTitle class="text-xl dark:text-white">Basic Information</CardTitle>
-                <CardDescription class="dark:text-gray-300">Update your business details</CardDescription>
-              </div>
-            </div>
+            <CardTitle class="text-xl dark:text-white transition-colors duration-300">
+              <Building class="w-5 h-5 inline mr-2" />
+              Basic Information
+            </CardTitle>
+            <CardDescription class="dark:text-gray-300 transition-colors duration-300">
+              Update your business details
+            </CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
             <div class="grid md:grid-cols-2 gap-6">
-              <div>
+              <div class="space-y-2">
                 <Label for="name" class="text-sm font-medium dark:text-gray-200">Business Name *</Label>
                 <Input
                   id="name"
-                  type="text"
                   bind:value={business.name}
-                  class="mt-1 {errors.name ? 'border-red-500' : ''}"
+                  class={errors.name ? 'border-red-500' : ''}
                   placeholder="Enter business name"
                 />
                 {#if errors.name}
-                  <p class="text-red-500 text-sm mt-1">{errors.name}</p>
+                  <p class="text-red-500 text-sm">{errors.name}</p>
                 {/if}
               </div>
-              
-              <div>
+
+              <div class="space-y-2">
                 <Label for="phone" class="text-sm font-medium dark:text-gray-200">Phone Number</Label>
                 <Input
                   id="phone"
-                  type="tel"
                   bind:value={business.phone}
-                  class="mt-1"
-                  placeholder="Enter phone number"
+                  placeholder="(555) 123-4567"
                 />
               </div>
             </div>
-            
-            <div>
+
+            <div class="space-y-2">
               <Label for="description" class="text-sm font-medium dark:text-gray-200">Description *</Label>
               <Textarea
                 id="description"
                 bind:value={business.description}
-                class="mt-1 {errors.description ? 'border-red-500' : ''}"
-                placeholder="Describe your business"
+                class={errors.description ? 'border-red-500' : ''}
+                placeholder="Describe your business and services"
                 rows={3}
               />
               {#if errors.description}
-                <p class="text-red-500 text-sm mt-1">{errors.description}</p>
+                <p class="text-red-500 text-sm">{errors.description}</p>
               {/if}
             </div>
-            
-            <div>
+
+            <div class="space-y-2">
               <Label for="website" class="text-sm font-medium dark:text-gray-200">Website</Label>
               <Input
                 id="website"
-                type="url"
                 bind:value={business.website}
-                class="mt-1"
-                placeholder="https://your-website.com"
+                placeholder="https://example.com"
               />
             </div>
           </CardContent>
         </Card>
 
-        <!-- Address Information -->
+        <!-- Address -->
         <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
           <CardHeader>
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                <MapPin class="w-5 h-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <CardTitle class="text-xl dark:text-white">Address Information</CardTitle>
-                <CardDescription class="dark:text-gray-300">Update your business address</CardDescription>
-              </div>
-            </div>
+            <CardTitle class="text-xl dark:text-white transition-colors duration-300">
+              <MapPin class="w-5 h-5 inline mr-2" />
+              Address
+            </CardTitle>
+            <CardDescription class="dark:text-gray-300 transition-colors duration-300">
+              Your business location
+            </CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
-            <div>
+            <div class="space-y-2">
               <Label for="street" class="text-sm font-medium dark:text-gray-200">Street Address *</Label>
               <Input
                 id="street"
-                type="text"
                 bind:value={business.address.street}
-                class="mt-1 {errors.street ? 'border-red-500' : ''}"
-                placeholder="Enter street address"
+                class={errors.street ? 'border-red-500' : ''}
+                placeholder="123 Main Street"
               />
               {#if errors.street}
-                <p class="text-red-500 text-sm mt-1">{errors.street}</p>
+                <p class="text-red-500 text-sm">{errors.street}</p>
               {/if}
             </div>
-            
-            <div class="grid md:grid-cols-3 gap-6">
-              <div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-2">
                 <Label for="city" class="text-sm font-medium dark:text-gray-200">City *</Label>
                 <Input
                   id="city"
-                  type="text"
                   bind:value={business.address.city}
-                  class="mt-1 {errors.city ? 'border-red-500' : ''}"
-                  placeholder="Enter city"
+                  class={errors.city ? 'border-red-500' : ''}
+                  placeholder="City"
                 />
                 {#if errors.city}
-                  <p class="text-red-500 text-sm mt-1">{errors.city}</p>
+                  <p class="text-red-500 text-sm">{errors.city}</p>
                 {/if}
               </div>
-              
-              <div>
+
+              <div class="space-y-2">
                 <Label for="stateProvince" class="text-sm font-medium dark:text-gray-200">State/Province *</Label>
                 <Input
                   id="stateProvince"
-                  type="text"
                   bind:value={business.address.stateProvince}
-                  class="mt-1 {errors.stateProvince ? 'border-red-500' : ''}"
-                  placeholder="Enter state/province"
+                  class={errors.stateProvince ? 'border-red-500' : ''}
+                  placeholder="State or Province"
                 />
                 {#if errors.stateProvince}
-                  <p class="text-red-500 text-sm mt-1">{errors.stateProvince}</p>
-                {/if}
-              </div>
-              
-              <div>
-                <Label for="zipPostalCode" class="text-sm font-medium dark:text-gray-200">ZIP/Postal Code *</Label>
-                <Input
-                  id="zipPostalCode"
-                  type="text"
-                  bind:value={business.address.zipPostalCode}
-                  class="mt-1 {errors.zipPostalCode ? 'border-red-500' : ''}"
-                  placeholder="Enter ZIP/postal code"
-                />
-                {#if errors.zipPostalCode}
-                  <p class="text-red-500 text-sm mt-1">{errors.zipPostalCode}</p>
+                  <p class="text-red-500 text-sm">{errors.stateProvince}</p>
                 {/if}
               </div>
             </div>
-            
-            <div>
-              <Label for="country" class="text-sm font-medium dark:text-gray-200">Country</Label>
-              <Input
-                id="country"
-                type="text"
-                bind:value={business.address.country}
-                class="mt-1"
-                placeholder="Enter country"
-              />
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <Label for="zipPostalCode" class="text-sm font-medium dark:text-gray-200">ZIP/Postal Code *</Label>
+                <Input
+                  id="zipPostalCode"
+                  bind:value={business.address.zipPostalCode}
+                  class={errors.zipPostalCode ? 'border-red-500' : ''}
+                  placeholder="12345"
+                />
+                {#if errors.zipPostalCode}
+                  <p class="text-red-500 text-sm">{errors.zipPostalCode}</p>
+                {/if}
+              </div>
+
+              <div class="space-y-2">
+                <Label for="country" class="text-sm font-medium dark:text-gray-200">Country</Label>
+                <Input
+                  id="country"
+                  bind:value={business.address.country}
+                  placeholder="Country"
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -391,15 +390,13 @@
         <!-- Delivery Settings -->
         <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
           <CardHeader>
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                <Truck class="w-5 h-5 text-orange-600 dark:text-orange-400" />
-              </div>
-              <div>
-                <CardTitle class="text-xl dark:text-white">Delivery Settings</CardTitle>
-                <CardDescription class="dark:text-gray-300">Configure your delivery parameters</CardDescription>
-              </div>
-            </div>
+            <CardTitle class="text-xl dark:text-white transition-colors duration-300">
+              <Truck class="w-5 h-5 inline mr-2" />
+              Delivery Settings
+            </CardTitle>
+            <CardDescription class="dark:text-gray-300 transition-colors duration-300">
+              Configure your delivery parameters
+            </CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
             <div class="grid md:grid-cols-2 gap-6">
@@ -414,13 +411,13 @@
                     placeholder="10"
                     min="1"
                   />
-                  <select 
-                    bind:value={business.delivery.radiusUnit}
-                    class="px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
-                  >
-                    <option value="miles">Miles</option>
-                    <option value="kilometers">Kilometers</option>
-                  </select>
+                  <Select type="single" bind:value={business.delivery.radiusUnit}>
+                    <SelectTrigger class="w-32"></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="miles">Miles</SelectItem>
+                      <SelectItem value="kilometers">Kilometers</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 {#if errors.radius}
                   <p class="text-red-500 text-sm mt-1">{errors.radius}</p>
@@ -444,77 +441,74 @@
         <!-- Operating Hours -->
         <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
           <CardHeader>
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                <Clock class="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <CardTitle class="text-xl dark:text-white">Operating Hours</CardTitle>
-                <CardDescription class="dark:text-gray-300">Set your business operating hours</CardDescription>
-              </div>
-            </div>
+            <CardTitle class="text-xl dark:text-white transition-colors duration-300">
+              <Clock class="w-5 h-5 inline mr-2" />
+              Operating Hours
+            </CardTitle>
+            <CardDescription class="dark:text-gray-300 transition-colors duration-300">
+              Set your business hours for deliveries
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div class="space-y-4">
-              {#each Object.entries(business.operatingHours) as [day, hours]}
-                <div class="flex items-center space-x-4 p-3 border border-gray-200 dark:border-slate-700 rounded-lg">
-                  <div class="flex items-center space-x-3 flex-1">
-                    <input
-                      type="checkbox"
-                      id={`${day}-enabled`}
-                      checked={hours.enabled}
-                      onchange={() => toggleDayEnabled(day)}
-                      class="w-4 h-4 text-blue-600 dark:text-purple-600 bg-gray-100 dark:bg-slate-700 border-gray-300 dark:border-slate-600 rounded focus:ring-blue-500 dark:focus:ring-purple-500"
-                    />
-                    <Label for={`${day}-enabled`} class="text-sm font-medium dark:text-gray-200 capitalize min-w-[80px]">
-                      {day}
-                    </Label>
-                  </div>
-                  
-                  {#if hours.enabled}
-                    <div class="flex items-center space-x-2">
-                      <Input
-                        type="time"
-                        bind:value={hours.open}
-                        class="w-26"
-                      />
-                      <span class="text-gray-500 dark:text-gray-400">to</span>
-                      <Input
-                        type="time"
-                        bind:value={hours.close}
-                        class="w-26"
-                      />
-                    </div>
-                  {:else}
-                    <Badge variant="secondary" class="text-xs">Closed</Badge>
-                  {/if}
+          <CardContent class="space-y-4">
+            {#each Object.entries(business.operatingHours) as [day, hours]}
+              <div class="flex items-center space-x-4 p-3 border border-gray-200 dark:border-slate-700 rounded-lg">
+                <div class="flex items-center space-x-3 flex-1">
+                  <Checkbox 
+                    id={`${day}-enabled`} 
+                    bind:checked={hours.enabled}
+                    onchange={() => toggleDayEnabled(day)}
+                  />
+                  <Label for={`${day}-enabled`} class="text-sm font-medium dark:text-gray-200 capitalize min-w-[80px]">
+                    {day}
+                  </Label>
                 </div>
-              {/each}
-            </div>
+                
+                {#if hours.enabled}
+                  <div class="flex items-center space-x-2">
+                    <Input
+                      type="time"
+                      bind:value={hours.open}
+                      class="w-26"
+                    />
+                    <span class="text-gray-500 dark:text-gray-400">to</span>
+                    <Input
+                      type="time"
+                      bind:value={hours.close}
+                      class="w-26"
+                    />
+                  </div>
+                {:else}
+                  <Badge variant="secondary" class="text-xs">Closed</Badge>
+                {/if}
+              </div>
+            {/each}
           </CardContent>
         </Card>
 
         <!-- Action Buttons -->
-        <div class="flex justify-between pt-6">
+        <div class="flex justify-between items-center pt-6">
           <Button
-            variant="destructive"
-            onclick={deleteBusiness}
+            variant="outline"
+            onclick={cancelEdit}
+            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
           >
-            <Trash class="w-4 h-4 mr-2" />
-            Delete Business
+            Cancel
           </Button>
+
           <div class="flex space-x-3">
-            <Button 
-              variant="outline" 
-              onclick={cancelEdit}
-              class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700"
+            <Button
+              variant="destructive"
+              onclick={deleteBusiness}
+              class="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors duration-300"
             >
-              Cancel
+              <Trash class="w-4 h-4 mr-2" />
+              Delete Business
             </Button>
-            <Button 
+
+            <Button
               onclick={saveBusiness}
               disabled={isSaving}
-              class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700"
+              class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
             >
               {#if isSaving}
                 <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
@@ -528,7 +522,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
   <Footer />
 </div> 

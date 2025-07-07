@@ -338,7 +338,7 @@
                     variant={notifications.emailNotifications ? "default" : "outline"}
                     size="sm"
                     onclick={() => notifications.emailNotifications = !notifications.emailNotifications}
-                    class={notifications.emailNotifications ? 'bg-blue-600 hover:bg-blue-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 w-full sm:w-auto'}
+                    class={notifications.emailNotifications ? 'bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 w-full sm:w-auto transition-colors duration-300'}
                   >
                     {notifications.emailNotifications ? 'On' : 'Off'}
                   </Button>
@@ -355,7 +355,7 @@
                     variant={notifications.pushNotifications ? "default" : "outline"}
                     size="sm"
                     onclick={() => notifications.pushNotifications = !notifications.pushNotifications}
-                    class={notifications.pushNotifications ? 'bg-blue-600 hover:bg-blue-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 w-full sm:w-auto'}
+                    class={notifications.pushNotifications ? 'bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 w-full sm:w-auto transition-colors duration-300'}
                   >
                     {notifications.pushNotifications ? 'On' : 'Off'}
                   </Button>
@@ -372,7 +372,7 @@
                     variant={notifications.marketingEmails ? "default" : "outline"}
                     size="sm"
                     onclick={() => notifications.marketingEmails = !notifications.marketingEmails}
-                    class={notifications.marketingEmails ? 'bg-blue-600 hover:bg-blue-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 w-full sm:w-auto'}
+                    class={notifications.marketingEmails ? 'bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 w-full sm:w-auto' : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 w-full sm:w-auto transition-colors duration-300'}
                   >
                     {notifications.marketingEmails ? 'On' : 'Off'}
                   </Button>

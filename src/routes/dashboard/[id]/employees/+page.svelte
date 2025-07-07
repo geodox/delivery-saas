@@ -282,7 +282,7 @@
               <select
                 id="status"
                 bind:value={selectedStatus}
-                class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300"
+                class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
               >
                 {#each statusOptions as option}
                   <option value={option.value}>{option.label}</option>
@@ -296,7 +296,7 @@
               <select
                 id="role"
                 bind:value={selectedRole}
-                class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300"
+                class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
               >
                 {#each filterRoleOptions as option}
                   <option value={option.value}>{option.label}</option>

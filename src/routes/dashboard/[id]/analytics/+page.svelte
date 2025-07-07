@@ -56,7 +56,7 @@
           <div class="flex space-x-3">
             <select 
               bind:value={selectedPeriod}
-              class="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-colors duration-300"
+              class="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
             >
               <option value="24h">Last 24 hours</option>
               <option value="7d">Last 7 days</option>
