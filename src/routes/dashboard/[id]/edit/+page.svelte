@@ -21,7 +21,8 @@
   import Clock from "lucide-svelte/icons/clock";
   import Truck from "lucide-svelte/icons/truck";
   import Trash from "lucide-svelte/icons/trash";
-    import SelectGroup from "$lib/components/ui/select/select-group.svelte";
+  // Toast
+  import { toast } from "svelte-sonner";
 
   let { data } = $props<{
     data: {
@@ -199,9 +200,10 @@
     if (confirmed) {
       let response = await fetch(`/api/businesses/?id=${data.selectedBusiness.id}`, { method: 'DELETE' });
         if (response.ok) {
+          toast.success("Business deleted successfully");
           goto(`/dashboard`);
         } else {
-          console.error("Failed to delete business");
+          toast.error("Failed to delete business");
       }
     }
   }

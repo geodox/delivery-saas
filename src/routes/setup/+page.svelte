@@ -1,7 +1,8 @@
 <script lang="ts">
+  // Svelte
   import { page } from "$app/state";
   import { enhance } from "$app/forms";
-
+  // Components
   import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
@@ -11,7 +12,7 @@
   import { Checkbox } from "$lib/components/ui/checkbox";
   import * as Select from "$lib/components/ui/select";
   import { Badge } from "$lib/components/ui/badge";
-
+  // Icons
   import Building from "lucide-svelte/icons/building";
   import MapPin from "lucide-svelte/icons/map-pin";
   import Phone from "lucide-svelte/icons/phone";
@@ -19,15 +20,15 @@
   import CheckCircle from "lucide-svelte/icons/check-circle";
   import ArrowRight from "lucide-svelte/icons/arrow-right";
   import ArrowLeft from "lucide-svelte/icons/arrow-left";
-
+  // Toast
+  import { toast } from "svelte-sonner";
+  // Environment variables
   import { PUBLIC_DEBUG_MODE as debug} from "$env/static/public";
 
   // Form data
   let currentStep = $state(1);
   const totalSteps = 4;
   let isLoading = $state(false);
-  let formError = $state<object | null>(null);
-  let formErrorDetails = $state<Array<string> | null>(null);
 
   // Step 1: Business Information
   let name = $state("");
@@ -244,15 +245,6 @@
     return currentStep === totalSteps;
   }
 
-  // Handle form action errors
-  $effect(() => {
-    if (page.form?.error) {
-      formError = page.form.error;
-      formErrorDetails = page.form?.details || null;
-      isLoading = false;
-    }
-  });
-
   if (debug) {
     name = "Deliveries";
     description = "We provide delivery services to the local area.";
@@ -314,12 +306,14 @@
           isLoading = true;
           return async ({ result, update }) => {
             if (result.type === 'failure') {
-              formError = result.data?.error || 'An error occurred';
-              formErrorDetails = result.data?.details as Array<string> || null;
               isLoading = false;
+              toast.error(result.data?.error as string || 'An error occurred', {
+                description: result.data?.details as string || ""
+              });
               await update();
             } else {
               isLoading = false;
+              toast.success("Business created successfully");
               await update();
             }
           };
