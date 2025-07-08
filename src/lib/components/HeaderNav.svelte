@@ -25,8 +25,7 @@
 
   function handleProfileMenuKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') {
-      profileMenuOpen = false;
-      focusedProfileMenuItemIndex = -1;
+      closeProfileMenu(true);
     }
   }
 
@@ -67,14 +66,12 @@
         break;
       case 'Escape':
         event.preventDefault();
-        profileMenuOpen = false;
-        focusedProfileMenuItemIndex = -1;
-        (document.getElementById(profileButtonId) as HTMLElement).focus();
+        closeProfileMenu(true);
         break;
       case 'Tab':
         // Only close menu when tabbing out of the last item (forward) or first item (backward)
         if ((!event.shiftKey && index === totalItems - 1) || (event.shiftKey && index === 0)) {
-          closeProfileMenu();
+          closeProfileMenu(true);
         }
         break;
     }
@@ -96,22 +93,25 @@
     }
   }
 
-  function closeProfileMenu() {
+  function closeProfileMenu(returnFocus = false) {
     profileMenuOpen = false;
     focusedProfileMenuItemIndex = -1;
-    // Return focus to the profile button when menu closes
-    setTimeout(() => {
-      const profileButton = document.getElementById(profileButtonId) as HTMLElement;
-      if (profileButton) {
-        profileButton.focus();
-      }
-    }, 0);
+    // Only return focus to the profile button when explicitly requested
+    if (returnFocus) {
+      setTimeout(() => {
+        const profileButton = document.getElementById(profileButtonId) as HTMLElement;
+        if (profileButton) {
+          profileButton.focus();
+        }
+      }, 0);
+    }
   }
   
   let mobileMenuOpen = $state(false);
   let mobileMenuId = "mobile-menu";
   let mobileMenuButtonId = "mobile-menu-button";
   let focusedMobileMenuItemIndex = $state(-1);
+  let globalTabListener: ((event: KeyboardEvent) => void) | null = null;
 
   function handleMobileMenuButtonKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -123,7 +123,6 @@
     }
   }
 
-  // FIXME: Children do not invoke this function so therefore tabbing on children does not trigger this function.
   function handleMobileMenuItemKeydown(event: KeyboardEvent, index: number) {
     const mobileMenuItems = document.querySelectorAll(`#${mobileMenuId} [role="menuitem"]`);
     const totalItems = mobileMenuItems.length;
@@ -162,16 +161,69 @@
     }
   }
 
+  // Handle keyboard events for the entire mobile menu container
+  function handleMobileMenuKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeMobileMenu();
+    }
+  }
+
+
+
+
+
+  // Set up mobile menu children with proper event handling
+  function setupMobileMenuChildren() {
+    if (mobileMenuOpen) {
+      setTimeout(() => {
+        const mobileMenu = document.getElementById(mobileMenuId);
+        if (mobileMenu) {
+          // Add click handlers to all children links to close menu
+          const childLinks = mobileMenu.querySelectorAll('.mobile-nav-children a');
+          childLinks.forEach((link) => {
+            link.addEventListener('click', () => closeMobileMenu());
+            link.setAttribute('role', 'menuitem');
+            link.setAttribute('tabindex', '0');
+          });
+
+          // Add global tab listener for the document
+          globalTabListener = (event: KeyboardEvent) => {
+            if (event.key === 'Tab' && mobileMenuOpen) {
+              const activeElement = document.activeElement as HTMLElement;
+              const isInMenu = activeElement && activeElement.closest(`#${mobileMenuId}`);
+              
+              if (isInMenu) {
+                const menuItems = mobileMenu.querySelectorAll('[role="menuitem"]');
+                const currentIndex = Array.from(menuItems).indexOf(activeElement);
+                
+                if (currentIndex !== -1) {
+                  // Close menu when tabbing out of the last item (forward) or first item (backward)
+                  if ((!event.shiftKey && currentIndex === menuItems.length - 1) || (event.shiftKey && currentIndex === 0)) {
+                    closeMobileMenu();
+                  }
+                }
+              }
+            }
+          };
+
+          document.addEventListener('keydown', globalTabListener);
+        }
+      }, 100);
+    }
+  }
+
   function toggleMobileMenu() {
     mobileMenuOpen = !mobileMenuOpen;
     if (mobileMenuOpen) {
-      // Focus first menu item when opening
+      // Focus first menu item when opening and set up children
       setTimeout(() => {
         const firstMenuItem = document.querySelector(`#${mobileMenuId} [role="menuitem"]`) as HTMLElement;
         if (firstMenuItem) {
           firstMenuItem.focus();
           focusedMobileMenuItemIndex = 0;
         }
+        setupMobileMenuChildren();
       }, 100);
     } else {
       focusedMobileMenuItemIndex = -1;
@@ -181,6 +233,13 @@
   function closeMobileMenu() {
     mobileMenuOpen = false;
     focusedMobileMenuItemIndex = -1;
+    
+    // Clean up global tab listener
+    if (globalTabListener) {
+      document.removeEventListener('keydown', globalTabListener);
+      globalTabListener = null;
+    }
+    
     // Return focus to the mobile menu button when menu closes
     setTimeout(() => {
       const mobileMenuButton = document.getElementById(mobileMenuButtonId) as HTMLElement;
@@ -221,7 +280,7 @@
             aria-haspopup="true"
             aria-controls={profileMenuId}
             aria-label="User profile menu"
-            {@attach clickOutside(() => closeProfileMenu())}
+            {@attach clickOutside(() => closeProfileMenu(false))}
           >
             <img
               src={page.data.session?.user?.image ?? "/default-avatar.png"}
@@ -247,7 +306,7 @@
               <a 
                 href="/dashboard" 
                 class="flex items-center rounded-md mx-1 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors duration-200 focus:bg-gray-100 dark:focus:bg-slate-700 focus:outline-none"
-                onclick={() => closeProfileMenu()}
+                onclick={() => closeProfileMenu(true)}
                 onkeydown={(e) => handleProfileMenuItemKeydown(e, 0)}
                 role="menuitem"
                 tabindex={0}
@@ -259,7 +318,7 @@
               <a 
                 href="/account" 
                 class="block rounded-md mx-1 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors duration-200 focus:bg-gray-100 dark:focus:bg-slate-700 focus:outline-none"
-                onclick={() => closeProfileMenu()}
+                onclick={() => closeProfileMenu(true)}
                 onkeydown={(e) => handleProfileMenuItemKeydown(e, 1)}
                 role="menuitem"
                 tabindex={0}
@@ -268,7 +327,7 @@
               </a>
               <button 
                 class="block rounded-md mx-1 text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors duration-200 cursor-pointer w-full focus:bg-gray-100 dark:focus:bg-slate-700 focus:outline-none"
-                onclick={() => {signOut(); closeProfileMenu();}}
+                onclick={() => {signOut(); closeProfileMenu(true);}}
                 onkeydown={(e) => handleProfileMenuItemKeydown(e, 2)}
                 role="menuitem"
                 tabindex={0}
@@ -309,25 +368,35 @@
     </nav>
   </div>
   <!-- Mobile Navigation Menu -->
+  {#if mobileMenuOpen}
   <div 
     id={mobileMenuId}
     class="md:hidden border-t border-gray-200 dark:border-slate-700 overflow-hidden transition-all duration-300 ease-in-out {mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}"
     role="navigation"
     aria-labelledby={mobileMenuButtonId}
     aria-hidden={!mobileMenuOpen}
+    onkeydown={handleMobileMenuKeydown}
   >
     <div class="flex flex-col space-y-4 transform transition-transform duration-300 ease-in-out {mobileMenuOpen ? 'translate-y-0' : '-translate-y-4'}">
       <!-- Mobile Navigation Links -->
       {#if children}
-      <div class="flex flex-col [&>a]:block [&>a]:py-2 [&>a]:px-3 [&>a]:rounded-md [&>a]:transition-colors [&>a]:duration-200 focus:bg-gray-100 dark:focus:bg-slate-700 focus:outline-none [&>a]:tabindex-0 [&>a]:role-menuitem" role="menubar">
-      {@render children()}
+      <div class="flex flex-col mobile-nav-children space-y-2 m-1" role="menubar">
+        {@render children()}
       </div>
       {/if}
 
       <!-- Mobile User Profile Section -->
       {#if page.data && page.data.session?.user}
       <div class="border-t pt-4 px-4 border-gray-200 dark:border-slate-700">
-        <div class="flex items-center space-x-3 mb-4">
+        <Button 
+          href="/account"
+          variant="ghost" 
+          class="flex items-center space-x-3 mb-4"
+          onclick={() => closeMobileMenu()}
+          role="menuitem"
+          tabindex={0}
+          onkeydown={(e) => handleMobileMenuItemKeydown(e, 1)}
+        >
           <img
             src={page.data.session?.user?.image ?? "/default-avatar.png"}
             alt=""
@@ -338,14 +407,14 @@
             <p class="text-gray-900 dark:text-white font-medium">{page.data.session.user.name ?? "Profile"}</p>
             <p class="text-sm text-gray-500 dark:text-gray-400">{page.data.session.user.email ?? ""}</p>
           </div>
-        </div>
+        </Button>
         <Button 
           onclick={() => {signOut(); closeMobileMenu();}} 
           class="w-full mb-4"
           variant="outline"
           role="menuitem"
           tabindex={0}
-          onkeydown={(e) => handleMobileMenuItemKeydown(e, 0)}
+          onkeydown={(e) => handleMobileMenuItemKeydown(e, 1)}
         >
           Log out
         </Button>
@@ -371,7 +440,7 @@
         onclick={() => closeMobileMenu()}
         role="menuitem"
         tabindex={0}
-        onkeydown={(e) => handleMobileMenuItemKeydown(e, 1)}
+        onkeydown={(e) => handleMobileMenuItemKeydown(e, showLogin ? 1 : 0)}
       >
         <a href="/register" class="w-full text-center">Get Started</a>
       </Button>
@@ -380,6 +449,7 @@
       {/if}
     </div>
   </div>
+  {/if}
 </header>
 
 <!-- Mobile Menu Overlay -->
@@ -390,3 +460,37 @@
   onclick={() => closeMobileMenu()}
 ></div>
 {/if}
+
+<style>
+  .mobile-nav-children {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .mobile-nav-children :global(a) {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    transition: opacity 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .mobile-nav-children :global(a:focus) {
+    opacity: 0.8;
+    outline: none;
+  }
+  
+  :global(.dark .mobile-nav-children a:focus) {
+    opacity: 0.8;
+  }
+  
+  .mobile-nav-children :global(a:hover) {
+    opacity: 0.8;
+  }
+  
+  :global(.dark .mobile-nav-children a:hover) {
+    opacity: 0.8;
+  }
+</style>
