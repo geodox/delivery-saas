@@ -4,12 +4,12 @@
 
   import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
-  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
+  import * as Card from "$lib/components/ui/card";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Textarea } from "$lib/components/ui/textarea";
   import { Checkbox } from "$lib/components/ui/checkbox";
-  import { Select, SelectContent, SelectItem, SelectTrigger } from "$lib/components/ui/select";
+  import * as Select from "$lib/components/ui/select";
   import { Badge } from "$lib/components/ui/badge";
 
   import Building from "lucide-svelte/icons/building";
@@ -59,124 +59,127 @@
   let specialRequirements = $state("");
 
   const countries = [
-    "United States",
     "Canada",
+    "United States",
     "United Kingdom",
     "Australia",
-    "Germany",
-    "France",
-    "Spain",
-    "Italy",
-    "Netherlands",
-    "Belgium",
-    "Switzerland",
-    "Austria",
-    "Sweden",
-    "Norway",
-    "Denmark",
-    "Finland",
-    "Ireland",
-    "New Zealand",
-    "Japan",
-    "South Korea",
-    "Singapore",
-    "Hong Kong",
-    "Taiwan",
-    "India",
     "Brazil",
-    "Mexico",
-    "Argentina",
-    "Chile",
-    "Colombia",
-    "Peru",
-    "Venezuela",
-    "Uruguay",
-    "Paraguay",
-    "Bolivia",
-    "Ecuador",
-    "Guyana",
-    "Suriname",
-    "French Guiana",
-    "South Africa",
-    "Egypt",
-    "Morocco",
-    "Tunisia",
-    "Algeria",
-    "Libya",
-    "Sudan",
-    "Ethiopia",
-    "Kenya",
-    "Uganda",
-    "Tanzania",
-    "Nigeria",
-    "Ghana",
-    "Ivory Coast",
-    "Senegal",
-    "Mali",
-    "Burkina Faso",
-    "Niger",
-    "Chad",
-    "Cameroon",
-    "Central African Republic",
-    "Democratic Republic of the Congo",
-    "Republic of the Congo",
-    "Gabon",
-    "Equatorial Guinea",
-    "Sao Tome and Principe",
-    "Angola",
-    "Zambia",
-    "Zimbabwe",
-    "Botswana",
-    "Namibia",
-    "Lesotho",
-    "Eswatini",
-    "Mozambique",
-    "Madagascar",
-    "Comoros",
-    "Mauritius",
-    "Seychelles",
-    "Djibouti",
-    "Somalia",
-    "Eritrea",
-    "Burundi",
-    "Rwanda",
-    "Malawi",
-    "Zambia",
-    "Zimbabwe",
-    "Botswana",
-    "Namibia",
-    "Lesotho",
-    "Eswatini",
-    "Mozambique",
-    "Madagascar",
-    "Comoros",
-    "Mauritius",
-    "Seychelles",
-    "Djibouti",
-    "Somalia",
-    "Eritrea",
-    "Burundi",
-    "Rwanda",
-    "Malawi"
   ];
 
   const countryProvinces: Record<string, string[]> = {
-    "United States": [
-      "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
-      "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
-      "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
-      "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
-      "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
-      "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-      "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
-      "Wisconsin", "Wyoming"
-    ],
-    "Canada": [
-      "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador",
-      "Northwest Territories", "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island",
-      "Quebec", "Saskatchewan", "Yukon"
-    ]
-  };
+  "Canada": [
+    "Alberta",
+    "British Columbia",
+    "Manitoba",
+    "New Brunswick",
+    "Newfoundland and Labrador",
+    "Northwest Territories",
+    "Nova Scotia",
+    "Nunavut",
+    "Ontario",
+    "Prince Edward Island",
+    "Quebec",
+    "Saskatchewan",
+    "Yukon"
+  ],
+  "United States": [
+    "Alabama",
+    "Alaska",
+    "Arizona",
+    "Arkansas",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "Delaware",
+    "Florida",
+    "Georgia",
+    "Hawaii",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Iowa",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Maine",
+    "Maryland",
+    "Massachusetts",
+    "Michigan",
+    "Minnesota",
+    "Mississippi",
+    "Missouri",
+    "Montana",
+    "Nebraska",
+    "Nevada",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "New York",
+    "North Carolina",
+    "North Dakota",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Rhode Island",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Vermont",
+    "Virginia",
+    "Washington",
+    "West Virginia",
+    "Wisconsin",
+    "Wyoming"
+  ],
+  "United Kingdom": [
+    "England",
+    "Northern Ireland",
+    "Scotland",
+    "Wales"
+  ],
+  "Australia": [
+    "Australian Capital Territory",
+    "New South Wales",
+    "Northern Territory",
+    "Queensland",
+    "South Australia",
+    "Tasmania",
+    "Victoria",
+    "Western Australia"
+  ],
+  "Brazil": [
+    "Acre",
+    "Alagoas",
+    "Amapá",
+    "Amazonas",
+    "Bahia",
+    "Ceará",
+    "Distrito Federal",
+    "Espírito Santo",
+    "Goiás",
+    "Maranhão",
+    "Mato Grosso",
+    "Mato Grosso do Sul",
+    "Minas Gerais",
+    "Pará",
+    "Paraíba",
+    "Paraná",
+    "Pernambuco",
+    "Piauí",
+    "Rio de Janeiro",
+    "Rio Grande do Norte",
+    "Rio Grande do Sul",
+    "Rondônia",
+    "Roraima",
+    "Santa Catarina",
+    "São Paulo",
+    "Sergipe",
+    "Tocantins"
+  ]
+};
 
   function nextStep() {
     if (currentStep < totalSteps) {
@@ -239,31 +242,6 @@
 
   function isLastStep() {
     return currentStep === totalSteps;
-  }
-
-  function handleSubmit() {
-    if (isLastStep() && canProceed()) {
-      // TODO: Submit form data
-      console.log("Form submitted:", {
-        name,
-        description,
-        website,
-        phone,
-        address: {
-          streetAddress,
-          city,
-          stateProvince,
-          zipPostalCode,
-          country
-        },
-        operatingHours,
-        delivery: {
-          radius: deliveryRadius,
-          radiusUnit: deliveryRadiusUnit,
-          specialRequirements
-        }
-      });
-    }
   }
 
   // Handle form action errors
@@ -330,296 +308,331 @@
         </p>
       </div>
 
-      <!-- Form Card -->
-      <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
-        <CardContent class="p-8">
-          {#if currentStep === 1}
-            <!-- Step 1: Business Information -->
-            <div class="space-y-6">
-              <div class="space-y-2">
-                <Label for="name" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                  Business Name *
-                </Label>
-                <div class="relative">
-                  <Building class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
-                  <Input
-                    id="name"
-                    type="text"
-                    bind:value={name}
-                    placeholder="Enter your business name"
-                    class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
-                    required
-                  />
-                </div>
-              </div>
+      <form 
+        method="POST" 
+        use:enhance={() => {
+          isLoading = true;
+          return async ({ result, update }) => {
+            if (result.type === 'failure') {
+              formError = result.data?.error || 'An error occurred';
+              formErrorDetails = result.data?.details as Array<string> || null;
+              isLoading = false;
+              await update();
+            } else {
+              isLoading = false;
+              await update();
+            }
+          };
+        }}
+      >
+        <!-- Hidden form fields for all data -->
+        <input type="hidden" name="name" value={name} />
+        <input type="hidden" name="description" value={description} />
+        <input type="hidden" name="website" value={website} />
+        <input type="hidden" name="phone" value={phone} />
+        <input type="hidden" name="streetAddress" value={streetAddress} />
+        <input type="hidden" name="city" value={city} />
+        <input type="hidden" name="stateProvince" value={stateProvince} />
+        <input type="hidden" name="zipPostalCode" value={zipPostalCode} />
+        <input type="hidden" name="country" value={country} />
+        <input type="hidden" name="operatingHours" value={JSON.stringify(operatingHours)} />
+        <input type="hidden" name="deliveryRadius" value={deliveryRadius} />
+        <input type="hidden" name="specialRequirements" value={specialRequirements} />
 
-              <div class="space-y-2">
-                <Label for="description" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                  Business Description
-                </Label>
-                <Textarea
-                  id="description"
-                  bind:value={description}
-                  placeholder="Brief description of your business and services"
-                  class="dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
-                  rows={3}
-                />
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Form Card -->
+        <Card.Root class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
+          <Card.Content class="p-8">
+            {#if currentStep === 1}
+              <!-- Step 1: Business Information -->
+              <div class="space-y-6">
                 <div class="space-y-2">
-                  <Label for="website" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                    Website
+                  <Label for="name" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                    Business Name *
                   </Label>
                   <div class="relative">
-                    <Globe class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
+                    <Building class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
                     <Input
-                      id="website"
-                      type="url"
-                      bind:value={website}
-                      placeholder="https://example.com"
-                      class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
-                    />
-                  </div>
-                </div>
-
-                <div class="space-y-2">
-                  <Label for="phone" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                    Phone Number *
-                  </Label>
-                  <div class="relative">
-                    <Phone class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
-                    <Input
-                      id="phone"
-                      type="tel"
-                      bind:value={phone}
-                      placeholder="(555) 123-4567"
+                      id="name"
+                      type="text"
+                      bind:value={name}
+                      placeholder="Enter your business name"
                       class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
                       required
                     />
                   </div>
                 </div>
-              </div>
-            </div>
 
-          {:else if currentStep === 2}
-            <!-- Step 2: Business Address -->
-            <div class="space-y-6">
-              <div class="space-y-2">
-                <Label for="streetAddress" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                  Street Address *
-                </Label>
-                <div class="relative">
-                  <MapPin class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
-                  <Input
-                    id="streetAddress"
-                    type="text"
-                    bind:value={streetAddress}
-                    placeholder="123 Main Street"
-                    class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-2">
-                  <Label for="city" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                    City *
+                  <Label for="description" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                    Business Description
                   </Label>
-                  <Input
-                    id="city"
-                    type="text"
-                    bind:value={city}
-                    placeholder="City"
+                  <Textarea
+                    id="description"
+                    bind:value={description}
+                    placeholder="Brief description of your business and services"
                     class="dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
-                    required
+                    rows={3}
                   />
                 </div>
 
-                <div class="space-y-2">
-                  <Label for="zipPostalCode" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                    ZIP/Postal Code *
-                  </Label>
-                  <Input
-                    id="zipPostalCode"
-                    type="text"
-                    bind:value={zipPostalCode}
-                    placeholder="12345"
-                    class="dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="space-y-2">
-                  <Label for="country" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                    Country *
-                  </Label>
-                  <Select type="single" bind:value={country} required>
-                    <SelectTrigger class="w-full dark:bg-slate-700/50 dark:border-slate-600 dark:text-white transition-colors duration-300">
-                    </SelectTrigger>
-                    <SelectContent placeholder="Select country">
-                      {#each countries as countryOption}
-                        <SelectItem value={countryOption}>{countryOption}</SelectItem>
-                      {/each}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {#if country && countryProvinces[country]}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div class="space-y-2">
-                    <Label for="stateProvince" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                      {country === "United States" ? "State" : "Province/Region"} *
+                    <Label for="website" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                      Website
                     </Label>
-                    <Select type="single" bind:value={stateProvince} required>
-                      <SelectTrigger class="w-full dark:bg-slate-700/50 dark:border-slate-600 dark:text-white transition-colors duration-300">
-                      </SelectTrigger>
-                      <SelectContent placeholder="Select {country === 'United States' ? 'state' : 'province/region'}">
-                        {#each countryProvinces[country] as province}
-                          <SelectItem value={province}>{province}</SelectItem>
-                        {/each}
-                      </SelectContent>
-                    </Select>
+                    <div class="relative">
+                      <Globe class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
+                      <Input
+                        id="website"
+                        type="url"
+                        bind:value={website}
+                        placeholder="https://example.com"
+                        class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
+                      />
+                    </div>
                   </div>
-                {:else}
+
                   <div class="space-y-2">
-                    <Label for="stateProvince" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                      State/Province/Region *
+                    <Label for="phone" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                      Phone Number *
+                    </Label>
+                    <div class="relative">
+                      <Phone class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
+                      <Input
+                        id="phone"
+                        type="tel"
+                        bind:value={phone}
+                        placeholder="(555) 123-4567"
+                        class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            {:else if currentStep === 2}
+              <!-- Step 2: Business Address -->
+              <div class="space-y-6">
+                <div class="space-y-2">
+                  <Label for="streetAddress" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                    Street Address *
+                  </Label>
+                  <div class="relative">
+                    <MapPin class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" aria-hidden="true" />
+                    <Input
+                      id="streetAddress"
+                      type="text"
+                      bind:value={streetAddress}
+                      placeholder="123 Main Street"
+                      class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <Label for="city" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                      City *
                     </Label>
                     <Input
-                      id="stateProvince"
+                      id="city"
                       type="text"
-                      bind:value={stateProvince}
-                      placeholder="State/Province/Region"
+                      bind:value={city}
+                      placeholder="City"
                       class="dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
                       required
                     />
                   </div>
+
+                  <div class="space-y-2">
+                    <Label for="zipPostalCode" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                      ZIP/Postal Code *
+                    </Label>
+                    <Input
+                      id="zipPostalCode"
+                      type="text"
+                      bind:value={zipPostalCode}
+                      placeholder="12345"
+                      class="dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <Label for="country" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                      Country *
+                    </Label>
+                    <Select.Root type="single" bind:value={country} required>
+                      <Select.Trigger class="w-full dark:bg-slate-700/50 dark:border-slate-600 dark:text-white transition-colors duration-300">
+                        {country}
+                      </Select.Trigger>
+                      <Select.Content placeholder="Select country">
+                        {#each countries as countryOption}
+                          <Select.Item value={countryOption}>{countryOption}</Select.Item>
+                        {/each}
+                      </Select.Content>
+                    </Select.Root>
+                  </div>
+
+                  {#if country && countryProvinces[country]}
+                    <div class="space-y-2">
+                      <Label for="stateProvince" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                        {country === "United States" ? "State" : "Province/Region"} *
+                      </Label>
+                      <Select.Root type="single" bind:value={stateProvince} required>
+                        <Select.Trigger class="w-full dark:bg-slate-700/50 dark:border-slate-600 dark:text-white transition-colors duration-300">
+                          {stateProvince}
+                        </Select.Trigger>
+                        <Select.Content placeholder="Select {country === 'United States' ? 'state' : 'province/region'}">
+                          {#each countryProvinces[country] as province}
+                            <Select.Item value={province}>{province}</Select.Item>
+                          {/each}
+                        </Select.Content>
+                      </Select.Root>
+                    </div>
+                  {:else}
+                    <div class="space-y-2">
+                      <Label for="stateProvince" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                        State/Province/Region *
+                      </Label>
+                      <Input
+                        id="stateProvince"
+                        type="text"
+                        bind:value={stateProvince}
+                        placeholder="State/Province/Region"
+                        class="dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
+                        required
+                      />
+                    </div>
+                  {/if}
+                </div>
+              </div>
+
+            {:else if currentStep === 3}
+              <!-- Step 3: Operating Hours -->
+              <div class="space-y-4">
+                <Label class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+                  Operating Hours
+                </Label>
+                <div class="space-y-3">
+                  {#each Object.entries(operatingHours) as [day, hours]}
+                    <div class="flex items-center justify-between space-x-4 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg transition-colors duration-300">
+                      <div class="w-20">
+                        <div class="flex items-center space-x-2">
+                          <Checkbox id={`${day}-enabled`} bind:checked={hours.enabled} />
+                          <Label for={`${day}-enabled`} class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize transition-colors duration-300">{day}</Label>
+                        </div>
+                      </div>
+                      
+                      {#if hours.enabled}
+                        <div class="flex items-center space-x-2">
+                          <Input
+                            type="time"
+                            bind:value={hours.open}
+                            class="w-26"
+                          />
+                          <span class="text-gray-500 dark:text-gray-400">to</span>
+                          <Input
+                            type="time"
+                            bind:value={hours.close}
+                            class="w-26"
+                          />
+                        </div>
+                      {:else}
+                        <Badge variant="secondary" class="p-2">Closed</Badge>
+                      {/if}
+                    </div>
+                  {/each}
+                </div>
+              </div>
+
+            {:else if currentStep === 4}
+              <!-- Step 4: Delivery Settings -->
+              <div class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <Label for="radius" class="text-sm font-medium dark:text-gray-200">Delivery Radius *</Label>
+                    <div class="flex space-x-2 mt-1">
+                      <Input
+                        id="radius"
+                        type="number"
+                        bind:value={deliveryRadius}
+                        class="flex-1"
+                        placeholder="10"
+                        min="1"
+                      />
+                      <Select.Root type="single" bind:value={deliveryRadiusUnit}>
+                        <Select.Trigger class="w-32">
+                          {deliveryRadiusUnit}
+                        </Select.Trigger>
+                        <Select.Content>
+                          <Select.Item value="miles">Miles</Select.Item>
+                          <Select.Item value="kilometers">Kilometers</Select.Item>
+                        </Select.Content>
+                      </Select.Root>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <Label for="specialRequirements" class="text-sm font-medium dark:text-gray-200">Special Requirements</Label>
+                  <Textarea
+                    id="specialRequirements"
+                    bind:value={specialRequirements}
+                    class="mt-1"
+                    placeholder="Any special delivery requirements or instructions"
+                    rows={3}
+                  />
+                </div>
+              </div>
+            {/if}
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between mt-8">
+              <Button
+                variant="outline"
+                onclick={prevStep}
+                disabled={!canGoBack()}
+                class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
+              >
+                <ArrowLeft class="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+
+              <div class="flex space-x-3">
+                {#if isLastStep()}
+                  <Button
+                    type="submit"
+                    disabled={!canProceed() || isLoading}
+                    class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
+                  >
+                    {#if isLoading}
+                      <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Creating...
+                    {:else}
+                      <CheckCircle class="w-4 h-4 mr-2" />
+                      Create Business
+                    {/if}
+                  </Button>
+                {:else}
+                  <Button
+                    onclick={nextStep}
+                    disabled={!canProceed()}
+                    class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
+                  >
+                    Next
+                    <ArrowRight class="w-4 h-4 ml-2" />
+                  </Button>
                 {/if}
               </div>
             </div>
-
-          {:else if currentStep === 3}
-            <!-- Step 3: Operating Hours -->
-            <div class="space-y-4">
-              <Label class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                Operating Hours
-              </Label>
-              <div class="space-y-3">
-                {#each Object.entries(operatingHours) as [day, hours]}
-                  <div class="flex items-center space-x-4 p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg transition-colors duration-300">
-                    <div class="w-20">
-                      <div class="flex items-center space-x-2">
-                        <Checkbox id={`${day}-enabled`} bind:checked={hours.enabled} />
-                        <Label for={`${day}-enabled`} class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize transition-colors duration-300">{day}</Label>
-                      </div>
-                    </div>
-                    
-                    {#if hours.enabled}
-                      <div class="flex items-center space-x-2">
-                        <Input
-                          type="time"
-                          bind:value={hours.open}
-                          class="w-26"
-                        />
-                        <span class="text-gray-500 dark:text-gray-400">to</span>
-                        <Input
-                          type="time"
-                          bind:value={hours.close}
-                          class="w-26"
-                        />
-                      </div>
-                    {:else}
-                      <Badge variant="secondary" class="text-xs">Closed</Badge>
-                    {/if}
-                  </div>
-                {/each}
-              </div>
-            </div>
-
-          {:else if currentStep === 4}
-            <!-- Step 4: Delivery Settings -->
-            <div class="space-y-6">
-              <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                  <Label for="radius" class="text-sm font-medium dark:text-gray-200">Delivery Radius *</Label>
-                  <div class="flex space-x-2 mt-1">
-                    <Input
-                      id="radius"
-                      type="number"
-                      bind:value={deliveryRadius}
-                      class="flex-1"
-                      placeholder="10"
-                      min="1"
-                    />
-                    <Select type="single" bind:value={deliveryRadiusUnit}>
-                      <SelectTrigger class="w-32">
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="miles">Miles</SelectItem>
-                        <SelectItem value="kilometers">Kilometers</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <Label for="specialRequirements" class="text-sm font-medium dark:text-gray-200">Special Requirements</Label>
-                <Textarea
-                  id="specialRequirements"
-                  bind:value={specialRequirements}
-                  class="mt-1"
-                  placeholder="Any special delivery requirements or instructions"
-                  rows={3}
-                />
-              </div>
-            </div>
-          {/if}
-
-          <!-- Navigation Buttons -->
-          <div class="flex justify-between mt-8">
-            <Button
-              variant="outline"
-              onclick={prevStep}
-              disabled={!canGoBack()}
-              class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
-            >
-              <ArrowLeft class="w-4 h-4 mr-2" />
-              Previous
-            </Button>
-
-            <div class="flex space-x-3">
-              {#if isLastStep()}
-                <Button
-                  onclick={handleSubmit}
-                  disabled={!canProceed() || isLoading}
-                  class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
-                >
-                  {#if isLoading}
-                    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Creating...
-                  {:else}
-                    <CheckCircle class="w-4 h-4 mr-2" />
-                    Create Business
-                  {/if}
-                </Button>
-              {:else}
-                <Button
-                  onclick={nextStep}
-                  disabled={!canProceed()}
-                  class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
-                >
-                  Next
-                  <ArrowRight class="w-4 h-4 ml-2" />
-                </Button>
-              {/if}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </Card.Content>
+        </Card.Root>
+      </form>
     </div>
   </main>
 
