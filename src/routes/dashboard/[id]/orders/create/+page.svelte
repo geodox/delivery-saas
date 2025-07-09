@@ -1,7 +1,7 @@
 <script lang="ts">
+  // Svelte
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
-
   // Components
   import { HeaderNav, Footer } from "$lib/components";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
@@ -9,7 +9,6 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Textarea } from "$lib/components/ui/textarea";
-
   // Lucide Icons
   import ArrowLeft from "lucide-svelte/icons/arrow-left";
   import Save from "lucide-svelte/icons/save";
@@ -21,15 +20,16 @@
   import Clock from "lucide-svelte/icons/clock";
   import DollarSign from "lucide-svelte/icons/dollar-sign";
   import FileText from "lucide-svelte/icons/file-text";
-
+  // Utils
+  import { toast } from "svelte-sonner";
+  import { countries, countryProvinces } from "$lib/utils/locations";
+  // Environment variables
   import { PUBLIC_DEBUG_MODE as debug} from "$env/static/public";
 
   const { data } = $props();
 
   // Form state using $state()
   let isLoading = $state(false);
-  let formError = $state<string | null>(null);
-  let formSuccess = $state<string | null>(null);
 
   // Customer Information
   let customerName = $state("");
@@ -50,27 +50,6 @@
 
   // Delivery Time
   let estimatedDeliveryTime = $state<string>("");
-
-  // Country/State options
-  const countryProvinces: Record<string, string[]> = {
-    "United States": [
-      "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
-      "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa",
-      "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan",
-      "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire",
-      "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
-      "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-      "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia",
-      "Wisconsin", "Wyoming"
-    ],
-    "Canada": [
-      "Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador",
-      "Northwest Territories", "Nova Scotia", "Nunavut", "Ontario", "Prince Edward Island",
-      "Quebec", "Saskatchewan", "Yukon"
-    ]
-  };
-
-  const countries = Object.keys(countryProvinces);
 
   // Validation state
   let errors = $state<Record<string, string>>({});
@@ -118,7 +97,7 @@
             </p>
           </div>
           <Button
-            href={`/dashboard/${data.selectedBusiness.id}/orders`}
+            href={`/dashboard/${data.selectedBusiness?.id}/orders`}
             variant="outline"
             class="hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors duration-300"
           >
@@ -128,28 +107,14 @@
         </div>
       </div>
 
-      <!-- Success/Error Messages -->
-      {#if formSuccess}
-        <div class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-          <p class="text-green-800 dark:text-green-200 text-sm font-medium">{formSuccess}</p>
-        </div>
-      {/if}
 
-      {#if formError}
-        <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <p class="text-red-800 dark:text-red-200 text-sm font-medium">{formError}</p>
-        </div>
-      {/if}
 
       <form method="POST" use:enhance={() => {
         return async ({ result }) => {
-          if (result.type === 'success') {
-            formSuccess = 'Order created successfully!';
-            setTimeout(() => {
-              goto(`/dashboard/${data.selectedBusiness.id}/orders`);
-            }, 2000);
-          } else if (result.type === 'failure') {
-            formError = (result.data?.error as string) || 'Failed to create order';
+          if (result.type === 'failure') {
+            toast.error((result.data?.error as string) || 'Failed to create order');
+          } else {
+            toast.success('Order created successfully!');
           }
         };
       }} class="space-y-6">
@@ -446,7 +411,7 @@
         <!-- Form Actions -->
         <div class="flex items-center justify-end space-x-4 pt-6">
           <Button
-            href={`/dashboard/${data.selectedBusiness.id}/orders`}
+            href={`/dashboard/${data.selectedBusiness?.id}/orders`}
             variant="outline"
             class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
             disabled={isLoading}
