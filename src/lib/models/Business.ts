@@ -1,6 +1,7 @@
 import { RecordId } from 'surrealdb';
 import { Address } from './Address';
 import { DeliverySettings } from './DeliverySettings';
+import type { RadiusUnit } from './DeliverySettings';
 import { OperatingHours } from './OperatingHours';
 
 export class Business {
@@ -107,7 +108,7 @@ export class Business {
       }),
       delivery: new DeliverySettings({
         radius: parseInt(formData.get('deliveryRadius') as string),
-        radiusUnit: country === 'Canada' ? 'kilometers' : 'miles',
+        radiusUnit: formData.get('deliveryRadiusUnit') as RadiusUnit,
         specialRequirements: formData.get('specialRequirements') as string
       }),
       operatingHours: new OperatingHours(JSON.parse(formData.get('operatingHours') as string))

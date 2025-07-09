@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
   // Don't allow access to account page if not logged in
   if (!session?.user) {
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
 
   return {

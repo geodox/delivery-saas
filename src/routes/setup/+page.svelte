@@ -59,6 +59,10 @@
   let deliveryRadiusUnit = $state("miles");
   let specialRequirements = $state("");
 
+  $effect(() => {
+    deliveryRadiusUnit = country === "Canada" ? "kilometers" : "miles";
+  });
+
   const countries = [
     "Canada",
     "United States",
