@@ -2,7 +2,8 @@
   // Types
   import type { Business } from "$lib/models";
   // Svelte
-  import { goto } from "$app/navigation";
+  import { enhance } from "$app/forms";
+  import { page } from "$app/state";
   // Components
   import { HeaderNav, Footer } from "$lib/components";
   import { Button } from "$lib/components/ui/button";
@@ -60,82 +61,6 @@
   });
 
   let isSaving = $state(false);
-  let errors = $state<Record<string, string>>({});
-
-  function validateForm() {
-    errors = {};
-    
-    if (!business.name.trim()) {
-      errors.name = 'Business name is required';
-    }
-    
-    if (!business.description.trim()) {
-      errors.description = 'Business description is required';
-    }
-    
-    if (!business.address.street.trim()) {
-      errors.street = 'Street address is required';
-    }
-    
-    if (!business.address.city.trim()) {
-      errors.city = 'City is required';
-    }
-    
-    if (!business.address.stateProvince.trim()) {
-      errors.stateProvince = 'State/Province is required';
-    }
-    
-    if (!business.address.zipPostalCode.trim()) {
-      errors.zipPostalCode = 'ZIP/Postal code is required';
-    }
-    
-    if (business.delivery.radius <= 0) {
-      errors.radius = 'Delivery radius must be greater than 0';
-    }
-  }
-
-  async function saveBusiness() {
-    validateForm();
-    
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
-
-    isSaving = true;
-    
-    try {
-      const formData = new FormData();
-      formData.append('name', business.name);
-      formData.append('description', business.description);
-      formData.append('website', business.website);
-      formData.append('phone', business.phone);
-      formData.append('streetAddress', business.address.street);
-      formData.append('city', business.address.city);
-      formData.append('stateProvince', business.address.stateProvince);
-      formData.append('zipPostalCode', business.address.zipPostalCode);
-      formData.append('country', business.address.country);
-      formData.append('deliveryRadius', business.delivery.radius.toString());
-      formData.append('specialRequirements', business.delivery.specialRequirements);
-      formData.append('operatingHours', JSON.stringify(business.operatingHours));
-
-      const response = await fetch(`/dashboard?id=${data.selectedBusiness.id}/edit`, {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        // Redirect back to dashboard
-        goto(`/dashboard?id=${data.selectedBusiness.id}`);
-      } else {
-        const result = await response.json();
-        console.error('Failed to update business:', result);
-      }
-    } catch (error) {
-      console.error('Error updating business:', error);
-    } finally {
-      isSaving = false;
-    }
-  }
 
   function cancelEdit() {
     // Reset form to original values
@@ -166,7 +91,7 @@
         sunday: { open: data.selectedBusiness.operatingHours?.sunday?.open || '10:00', close: data.selectedBusiness.operatingHours?.sunday?.close || '15:00', enabled: data.selectedBusiness.operatingHours?.sunday?.enabled || false }
       }
     };
-    errors = {};
+
   }
 
   function toggleDayEnabled(day: string) {
@@ -194,19 +119,6 @@
         break;
     }
   }
-
-  async function deleteBusiness() {
-    let confirmed = confirm("Are you sure you want to delete this business? This action cannot be undone.");
-    if (confirmed) {
-      let response = await fetch(`/api/businesses/?id=${data.selectedBusiness.id}`, { method: 'DELETE' });
-        if (response.ok) {
-          toast.success("Business deleted successfully");
-          goto(`/dashboard`);
-        } else {
-          toast.error("Failed to delete business");
-      }
-    }
-  }
 </script>
 
 <svelte:head>
@@ -226,29 +138,60 @@
     <div class="container mx-auto px-4 max-w-4xl">
       <!-- Page Header -->
       <div class="mb-8 flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <Button 
-            href={`/dashboard/${data.selectedBusiness?.id}`}
-            variant="outline" 
-            size="sm"
-            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
-          >
-            <ArrowLeft class="w-4 h-4 mr-2" />
-            Back to Dashboard
-          </Button>
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
-              Edit Business
-            </h1>
-            <p class="text-gray-600 dark:text-gray-300 mt-1 transition-colors duration-300">
-              Update your business information and settings
-            </p>
-          </div>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
+            Edit Business
+          </h1>
+          <p class="text-gray-600 dark:text-gray-300 mt-1 transition-colors duration-300">
+            Update your business information and settings
+          </p>
         </div>
+        <Button 
+          href={`/dashboard/${data.selectedBusiness?.id}`}
+          variant="outline" 
+          size="sm"
+          class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
+        >
+          <ArrowLeft class="w-4 h-4 mr-2" />
+          Back to Dashboard
+        </Button>
       </div>
 
       <!-- Form -->
-      <div class="space-y-6">
+      <form 
+        method="POST" 
+        action="?/update"
+        use:enhance={() => {
+          isSaving = true;
+          return async ({ result, update }) => {
+            isSaving = false;
+            if (result.type === 'failure') {
+              toast.error(result.data?.error as string || 'An error occurred', {
+                description: result.data?.details as string || ""
+              });
+              await update();
+            } else if (result.type === 'success') {
+              toast.success("Business updated successfully");
+              await update();
+            }
+          };
+        }}
+        class="space-y-6"
+      >
+        <!-- Hidden form fields -->
+        <input type="hidden" name="name" value={business.name} />
+        <input type="hidden" name="description" value={business.description} />
+        <input type="hidden" name="website" value={business.website} />
+        <input type="hidden" name="phone" value={business.phone} />
+        <input type="hidden" name="streetAddress" value={business.address.street} />
+        <input type="hidden" name="city" value={business.address.city} />
+        <input type="hidden" name="stateProvince" value={business.address.stateProvince} />
+        <input type="hidden" name="zipPostalCode" value={business.address.zipPostalCode} />
+        <input type="hidden" name="country" value={business.address.country} />
+        <input type="hidden" name="deliveryRadius" value={business.delivery.radius} />
+        <input type="hidden" name="specialRequirements" value={business.delivery.specialRequirements} />
+        <input type="hidden" name="operatingHours" value={JSON.stringify(business.operatingHours)} />
+
         <!-- Basic Information -->
         <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
           <CardHeader>
@@ -267,12 +210,8 @@
                 <Input
                   id="name"
                   bind:value={business.name}
-                  class={errors.name ? 'border-red-500' : ''}
                   placeholder="Enter business name"
                 />
-                {#if errors.name}
-                  <p class="text-red-500 text-sm">{errors.name}</p>
-                {/if}
               </div>
 
               <div class="space-y-2">
@@ -290,13 +229,9 @@
               <Textarea
                 id="description"
                 bind:value={business.description}
-                class={errors.description ? 'border-red-500' : ''}
                 placeholder="Describe your business and services"
                 rows={3}
               />
-              {#if errors.description}
-                <p class="text-red-500 text-sm">{errors.description}</p>
-              {/if}
             </div>
 
             <div class="space-y-2">
@@ -327,12 +262,8 @@
               <Input
                 id="street"
                 bind:value={business.address.street}
-                class={errors.street ? 'border-red-500' : ''}
                 placeholder="123 Main Street"
               />
-              {#if errors.street}
-                <p class="text-red-500 text-sm">{errors.street}</p>
-              {/if}
             </div>
 
             <div class="grid md:grid-cols-2 gap-6">
@@ -341,12 +272,8 @@
                 <Input
                   id="city"
                   bind:value={business.address.city}
-                  class={errors.city ? 'border-red-500' : ''}
                   placeholder="City"
                 />
-                {#if errors.city}
-                  <p class="text-red-500 text-sm">{errors.city}</p>
-                {/if}
               </div>
 
               <div class="space-y-2">
@@ -354,12 +281,8 @@
                 <Input
                   id="stateProvince"
                   bind:value={business.address.stateProvince}
-                  class={errors.stateProvince ? 'border-red-500' : ''}
                   placeholder="State or Province"
                 />
-                {#if errors.stateProvince}
-                  <p class="text-red-500 text-sm">{errors.stateProvince}</p>
-                {/if}
               </div>
             </div>
 
@@ -369,12 +292,8 @@
                 <Input
                   id="zipPostalCode"
                   bind:value={business.address.zipPostalCode}
-                  class={errors.zipPostalCode ? 'border-red-500' : ''}
                   placeholder="12345"
                 />
-                {#if errors.zipPostalCode}
-                  <p class="text-red-500 text-sm">{errors.zipPostalCode}</p>
-                {/if}
               </div>
 
               <div class="space-y-2">
@@ -401,38 +320,32 @@
             </CardDescription>
           </CardHeader>
           <CardContent class="space-y-6">
-            <div class="grid md:grid-cols-2 gap-6">
-              <div>
-                <Label for="radius" class="text-sm font-medium dark:text-gray-200">Delivery Radius *</Label>
-                <div class="flex space-x-2 mt-1">
-                  <Input
-                    id="radius"
-                    type="number"
-                    bind:value={business.delivery.radius}
-                    class="flex-1 {errors.radius ? 'border-red-500' : ''}"
-                    placeholder="10"
-                    min="1"
-                  />
-                  <Select type="single" bind:value={business.delivery.radiusUnit}>
-                    <SelectTrigger class="w-32"></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="miles">Miles</SelectItem>
-                      <SelectItem value="kilometers">Kilometers</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                {#if errors.radius}
-                  <p class="text-red-500 text-sm mt-1">{errors.radius}</p>
-                {/if}
+            <div>
+              <Label for="radius" class="text-sm font-medium dark:text-gray-200">Delivery Radius *</Label>
+              <div class="flex space-x-2 mt-1">
+                <Input
+                  id="radius"
+                  type="number"
+                  bind:value={business.delivery.radius}
+                  class="flex-1"
+                  placeholder="10"
+                  min="1"
+                />
+                <Select type="single" bind:value={business.delivery.radiusUnit}>
+                  <SelectTrigger class="w-32">{business.delivery.radiusUnit}</SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="miles">Miles</SelectItem>
+                    <SelectItem value="kilometers">Kilometers</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             
-            <div>
+            <div class="space-y-2">
               <Label for="specialRequirements" class="text-sm font-medium dark:text-gray-200">Special Requirements</Label>
               <Textarea
                 id="specialRequirements"
                 bind:value={business.delivery.specialRequirements}
-                class="mt-1"
                 placeholder="Any special delivery requirements or instructions"
                 rows={3}
               />
@@ -490,6 +403,7 @@
         <!-- Action Buttons -->
         <div class="flex justify-between items-center pt-6">
           <Button
+            type="button"
             variant="outline"
             onclick={cancelEdit}
             class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
@@ -497,32 +411,70 @@
             Cancel
           </Button>
 
-          <div class="flex space-x-3">
-            <Button
-              variant="destructive"
-              onclick={deleteBusiness}
-              class="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors duration-300"
-            >
-              <Trash class="w-4 h-4 mr-2" />
-              Delete Business
-            </Button>
-
-            <Button
-              onclick={saveBusiness}
-              disabled={isSaving}
-              class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
-            >
-              {#if isSaving}
-                <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Saving...
-              {:else}
-                <Save class="w-4 h-4 mr-2" />
-                Save Changes
-              {/if}
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            disabled={isSaving}
+            class="bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
+          >
+            {#if isSaving}
+              <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+              Saving...
+            {:else}
+              <Save class="w-4 h-4 mr-2" />
+              Save Changes
+            {/if}
+          </Button>
         </div>
-      </div>
+      </form>
+
+      <!-- Danger Zone -->
+      <Card class="border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20 mt-6">
+        <CardHeader>
+          <CardTitle class="text-xl text-red-800 dark:text-red-200 transition-colors duration-300">
+            <Trash class="w-5 h-5 inline mr-2" />
+            Danger Zone
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="space-y-4">
+            <div>
+              <h4 class="text-sm font-medium text-red-800 dark:text-red-200 mb-2">Delete Business</h4>
+              <p class="text-sm text-red-600 dark:text-red-300 mb-4">
+                Once you delete a business, there is no going back. Please be certain.
+              </p>
+              <form 
+                method="POST" 
+                action="?/delete" 
+                use:enhance={() => {
+                  if (!confirm("Are you sure you want to delete this business? This action cannot be undone.")) {
+                    return () => {};
+                  }
+                  return async ({ result, update }) => {
+                    if (result.type === 'failure') {
+                      toast.error(result.data?.error as string || 'Failed to delete business', {
+                        description: result.data?.details as string || ""
+                      });
+                      await update();
+                    } else if (result.type === 'success') {
+                      toast.success("Business deleted successfully");
+                      await update();
+                    }
+                  };
+                }}
+              >
+                <Button
+                  type="submit"
+                  variant="destructive"
+                  class="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors duration-300"
+                >
+                  <Trash class="w-4 h-4 mr-2" />
+                  Delete Business
+                </Button>
+              </form>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   </main>
 

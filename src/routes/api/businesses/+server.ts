@@ -146,7 +146,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 };
 
 // FIXME: Data retention: Soft deletes
-export const DELETE: RequestHandler = async ({ url, locals }) => {
+export const DELETE: RequestHandler = async ({ url }) => {
   const db = await clientPromise;
 
   const businessId = url.searchParams.get('id');
