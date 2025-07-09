@@ -40,7 +40,7 @@ export const actions: Actions = {
     }
 
     if (businessId) {
-      throw redirect(303, `/dashboard/${businessId}`);
+      redirect(303, `/dashboard/${businessId}`);
     }
 
     throw error(400, 'Business ID not found');

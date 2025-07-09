@@ -170,7 +170,7 @@
                 description: result.data?.details as string || ""
               });
               await update();
-            } else if (result.type === 'success') {
+            } else {
               toast.success("Business updated successfully");
               await update();
             }
@@ -455,7 +455,7 @@
                         description: result.data?.details as string || ""
                       });
                       await update();
-                    } else if (result.type === 'success') {
+                    } else {
                       toast.success("Business deleted successfully");
                       await update();
                     }

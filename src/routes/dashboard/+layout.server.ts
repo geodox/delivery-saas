@@ -13,7 +13,7 @@ export const load: LayoutServerLoad = async ({ fetch, params, locals }) => {
 
   // Don't allow access to dashboard if not logged in
   if (!session?.user) {
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
 
   // Get businesses for user
@@ -35,7 +35,7 @@ export const load: LayoutServerLoad = async ({ fetch, params, locals }) => {
   }
 
   if (!selectedBusinessId && selectedBusiness) {
-    throw redirect(301,`/dashboard/${selectedBusiness.id}`);
+    redirect(301,`/dashboard/${selectedBusiness.id}`);
   }
 
   return {

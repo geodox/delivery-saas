@@ -11,14 +11,14 @@ export const load: LayoutServerLoad = async ({ fetch, params, locals }) => {
 
   // Don't allow access to dashboard if not logged in
   if (!session?.user) {
-    throw redirect(303, '/login');
+    redirect(303, '/login');
   }
 
   const businessId = params.id;
 
   // Validate that businessId is provided
   if (!businessId) {
-    throw redirect(303, '/dashboard');
+    redirect(303, '/dashboard');
   }
 
   try {
@@ -28,7 +28,7 @@ export const load: LayoutServerLoad = async ({ fetch, params, locals }) => {
     if (!selectedBusinessResponse.ok) {
       if (selectedBusinessResponse.status === 404) {
         // Business not found or access denied
-        throw redirect(303, '/dashboard');
+        redirect(303, '/dashboard');
       }
       throw new Error('Failed to fetch business');
     }
@@ -57,6 +57,6 @@ export const load: LayoutServerLoad = async ({ fetch, params, locals }) => {
 
     // For any other error, redirect to main dashboard
     console.error('Error validating business ID:', err);
-    throw redirect(303, '/dashboard');
+    redirect(303, '/dashboard');
   }
 };

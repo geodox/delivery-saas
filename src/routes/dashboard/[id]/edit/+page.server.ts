@@ -108,7 +108,7 @@ export const actions: Actions = {
     }
 
     // Redirect back to dashboard
-    throw redirect(303, `/dashboard/${businessId}`);
+    redirect(303, `/dashboard/${businessId}`);
   },
 
   delete: async ({ params, fetch }) => {
@@ -138,6 +138,6 @@ export const actions: Actions = {
 
     console.log('Business deleted successfully');
     // Redirect to dashboard on success
-    throw redirect(303, `/dashboard`);
+    redirect(303, `/dashboard`);
   }
 }; 

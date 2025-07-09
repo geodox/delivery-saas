@@ -26,7 +26,11 @@ vite.config.ts.timestamp-*
 # jj
 /.jj
 
+# VSCode
+/.vscode
+
 # Local
 PRD.md
 PRD_old.md
 notes
+notes.md
