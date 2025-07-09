@@ -1,4 +1,7 @@
 <script lang="ts">
+  // Types
+  import type { Order } from "$lib/models/Order";
+  import type { Employee } from "$lib/models/Employee";
   // Components
   import { HeaderNav, Footer } from "$lib/components";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
@@ -15,7 +18,12 @@
   // Placeholder Data
   import { stats, recentOrders, activeDrivers } from "$lib/placeholder_data";
 
-  let { data } = $props();
+  let { data } = $props<{
+    data: { 
+      orders: Order[], 
+      employees: Employee[] 
+    }
+  }>();
 
   function getStatusColor(status: string) {
     switch (status) {

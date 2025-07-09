@@ -21,13 +21,17 @@ export const load: LayoutServerLoad = async ({ fetch, params, locals }) => {
     .then(res => res.json())
     .then(data => data.map((business: any) => new Business(business)));
 
-  // FIXME: Redirect to /dashboard?id=...?
   // Get current business from URL params or default to first business
   let selectedBusiness = null;
   const selectedBusinessId = params.id || null;
   
   if (selectedBusinessId) {
     selectedBusiness = businesses.find(b => b.id === selectedBusinessId) || null;
+    
+    // If business ID is provided but not found, redirect to dashboard
+    if (!selectedBusiness) {
+      redirect(303, '/dashboard');
+    }
   }
   
   if (!selectedBusiness && businesses.length === 1) {
