@@ -10,60 +10,6 @@ export const actions: Actions = {
     try {
       const formData = await request.formData();
 
-      const businessData = {
-        name: formData.get('name') as string,
-        description: formData.get('description') as string,
-        website: formData.get('website') as string,
-        phone: formData.get('phone') as string,
-        streetAddress: formData.get('streetAddress') as string,
-        city: formData.get('city') as string,
-        stateProvince: formData.get('stateProvince') as string,
-        zipPostalCode: formData.get('zipPostalCode') as string,
-        country: formData.get('country') as string,
-        deliveryRadius: parseInt(formData.get('deliveryRadius') as string),
-        specialRequirements: formData.get('specialRequirements') as string,
-        operatingHours: JSON.parse(formData.get('operatingHours') as string)
-      };
-
-      // Validate required fields
-      const errors: Record<string, string> = {};
-      
-      if (!businessData.name?.trim()) {
-        errors.name = 'Business name is required';
-      }
-      
-      if (!businessData.description?.trim()) {
-        errors.description = 'Business description is required';
-      }
-      
-      if (!businessData.streetAddress?.trim()) {
-        errors.street = 'Street address is required';
-      }
-      
-      if (!businessData.city?.trim()) {
-        errors.city = 'City is required';
-      }
-      
-      if (!businessData.stateProvince?.trim()) {
-        errors.stateProvince = 'State/Province is required';
-      }
-      
-      if (!businessData.zipPostalCode?.trim()) {
-        errors.zipPostalCode = 'ZIP/Postal code is required';
-      }
-      
-      if (businessData.deliveryRadius <= 0) {
-        errors.radius = 'Delivery radius must be greater than 0';
-      }
-
-      if (Object.keys(errors).length > 0) {
-        return fail(400, {
-          error: 'Validation failed',
-          details: errors,
-          data: businessData
-        });
-      }
-
       // Create business instance and validate
       const business = Business.fromFormData(formData);
       const validation = business.validate();
@@ -82,7 +28,7 @@ export const actions: Actions = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(business.toJSON())
+        body: JSON.stringify(business.toDBSafeJSON())
       });
 
       const result = await response.json();

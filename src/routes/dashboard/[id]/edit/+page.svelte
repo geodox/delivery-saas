@@ -179,6 +179,7 @@
         class="space-y-6"
       >
         <!-- Hidden form fields -->
+        <input type="hidden" name="id" value={data.selectedBusiness.id} />
         <input type="hidden" name="name" value={business.name} />
         <input type="hidden" name="description" value={business.description} />
         <input type="hidden" name="website" value={business.website} />
@@ -189,8 +190,10 @@
         <input type="hidden" name="zipPostalCode" value={business.address.zipPostalCode} />
         <input type="hidden" name="country" value={business.address.country} />
         <input type="hidden" name="deliveryRadius" value={business.delivery.radius} />
+        <input type="hidden" name="deliveryRadiusUnit" value={business.delivery.radiusUnit} />
         <input type="hidden" name="specialRequirements" value={business.delivery.specialRequirements} />
         <input type="hidden" name="operatingHours" value={JSON.stringify(business.operatingHours)} />
+        <input type="hidden" name="ownerId" value={data.selectedBusiness.ownerId} />
 
         <!-- Basic Information -->
         <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">

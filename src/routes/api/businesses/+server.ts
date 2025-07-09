@@ -145,8 +145,74 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   }
 };
 
+export const PUT: RequestHandler = async ({ request, locals, url }) => {
+  await getSession(locals); // Check if user is authenticated
+  const businessId = url.searchParams.get('id');
+  
+  if (!businessId) {
+    throw error(400, 'Business ID is required');
+  }
+
+  try {
+    const data = await request.json();
+    const db = await clientPromise;
+
+    // Create business instance from request data
+    const business = new Business({
+      ...data,
+      id: businessId // Ensure the ID is preserved
+    });
+
+    // Validate business data
+    const validation = business.validate();
+    if (!validation.isValid) {
+      return json({
+        error: 'Validation failed',
+        details: validation.errors,
+        data: business.toJSON()
+      }, { status: 400 });
+    }
+
+    // Update business profile
+    const updateResult = await db.query(`
+      UPDATE type::thing('business', $id) SET 
+        name = $name,
+        description = $description,
+        website = $website,
+        phone = $phone,
+        address = $address,
+        delivery = $delivery,
+        operatingHours = $operatingHours,
+        updatedAt = time::now()
+    `, business.toDBSafeJSON()) as any[];
+
+    const updatedBusiness = updateResult[0]?.[0];
+    if (!updatedBusiness) {
+      return json({
+        error: 'Failed to update business profile',
+        data: business.toJSON()
+      }, { status: 500 });
+    }
+
+    // Handle RecordId object
+    updatedBusiness.id = updatedBusiness.id.id;
+    
+    return json({ 
+      message: 'Business updated successfully',
+      business: updatedBusiness 
+    });
+  } catch (err) {
+    console.error('Business API PUT error:', err);
+    return json({
+      error: 'An unexpected error occurred during update',
+      details: err instanceof Error ? err.message : 'Unknown error'
+    }, { status: 500 });
+  }
+};
+
 // FIXME: Data retention: Soft deletes
-export const DELETE: RequestHandler = async ({ url }) => {
+export const DELETE: RequestHandler = async ({ locals, url }) => {
+  await getSession(locals); // Checks if the user is authenticated
   const db = await clientPromise;
 
   const businessId = url.searchParams.get('id');

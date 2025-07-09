@@ -1,4 +1,3 @@
-import { RecordId } from 'surrealdb';
 import { Address } from './Address';
 import { DeliverySettings } from './DeliverySettings';
 import type { RadiusUnit } from './DeliverySettings';
@@ -89,12 +88,29 @@ export class Business {
   }
 
   /**
+   * Converts the business to a plain object for database updates (excludes date fields)
+   */
+  public toDBSafeJSON(): Record<string, any> {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      website: this.website,
+      phone: this.phone,
+      address: this.address.toJSON(),
+      delivery: this.delivery.toJSON(),
+      operatingHours: this.operatingHours.toJSON(),
+      ownerId: this.ownerId
+      // Exclude createdAt and updatedAt - let SurrealDB handle these
+    };
+  }
+
+  /**
    * Creates a Business instance from form data
    */
   public static fromFormData(formData: FormData): Business {
-    const country = formData.get('country') as string;
-    
     return new Business({
+      id: formData.get('id') as string,
       name: formData.get('name') as string,
       description: formData.get('description') as string,
       website: formData.get('website') as string,
@@ -104,14 +120,15 @@ export class Business {
         city: formData.get('city') as string,
         stateProvince: formData.get('stateProvince') as string,
         zipPostalCode: formData.get('zipPostalCode') as string,
-        country: country
+        country: formData.get('country') as string
       }),
       delivery: new DeliverySettings({
         radius: parseInt(formData.get('deliveryRadius') as string),
         radiusUnit: formData.get('deliveryRadiusUnit') as RadiusUnit,
         specialRequirements: formData.get('specialRequirements') as string
       }),
-      operatingHours: new OperatingHours(JSON.parse(formData.get('operatingHours') as string))
+      operatingHours: new OperatingHours(JSON.parse(formData.get('operatingHours') as string)),
+      ownerId: formData.get('ownerId') as string
     });
   }
 } 
