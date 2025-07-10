@@ -246,7 +246,12 @@
               <Button
                 variant="outline"
                 class="w-full border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
-                onclick={() => signIn("google", { redirectTo: "/dashboard" })}
+                onclick={() => {
+                  // Preserve search params
+                  const urlParams = new URLSearchParams(window.location.search);
+                  const callbackUrl = `/auth_callback?${urlParams.toString()}`;
+                  signIn("google", { redirectTo: callbackUrl });
+                }}
                 aria-label="Sign up with Google"
               >
                 <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" aria-hidden="true">

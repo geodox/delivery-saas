@@ -109,8 +109,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     // Create employee record
     const employee = new Employee({
       userId: session.user.id,
-      businessId: businessRecord.id,
-      role: 'owner',
+      businessId: businessRecord.id.id,
+      roles: ['owner'],
       status: 'active'
     });
 
@@ -122,15 +122,16 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       }, { status: 500 });
     }
 
-    await db.query(`
+    // Create employee record with explicit array syntax
+    const employeeResult = await db.query(`
       CREATE employee SET 
-        userId = type::thing('user', $userId),
-        businessId = $businessId,
-        role = $role,
-        status = $status,
+        userId = type::thing('user', $employee.userId),
+        businessId = type::thing('business', $employee.businessId),
+        roles = $employee.roles,
+        status = $employee.status,
         createdAt = time::now(),
         updatedAt = time::now()
-    `, employee.toJSON());
+    `, { employee: employee.toJSON()});
 
     businessRecord.id = businessRecord.id.id;
     businessId = businessRecord.id;

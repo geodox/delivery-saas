@@ -23,11 +23,21 @@
   import Building from "lucide-svelte/icons/building";
   import MapPin from "lucide-svelte/icons/map-pin";
   import ExternalLink from "lucide-svelte/icons/external-link";
+  import Car from "lucide-svelte/icons/car";
+  import Navigation from "lucide-svelte/icons/navigation";
+  import DollarSign from "lucide-svelte/icons/dollar-sign";
+  import Package from "lucide-svelte/icons/package";
 
   let { data } = $props<{
     data: {
       session: any;
       businesses: Business[];
+      employees: any[];
+      userRole: {
+        primary: string;
+        isDriver: boolean;
+        isOwner: boolean;
+      };
     };
   }>();
 
@@ -56,6 +66,26 @@
   let isEditingProfile = $state(false);
   let isSaving = $state(false);
   let showDeleteConfirm = $state(false);
+
+  // Driver-specific state
+  let driverPreferences = $state({
+    notifications: {
+      newOrders: true,
+      orderUpdates: true,
+      earnings: true,
+      pushNotifications: true
+    },
+    navigation: {
+      defaultApp: 'google' as 'google' | 'apple' | 'waze',
+      avoidTolls: false,
+      avoidHighways: false
+    },
+    delivery: {
+      autoAccept: false,
+      maxDistance: 10,
+      minOrderValue: 5.00
+    }
+  });
 
   // Form validation
   let errors = $state<Record<string, string>>({});
@@ -115,6 +145,23 @@
     // Handle account deletion
     console.log('Account deletion confirmed');
     showDeleteConfirm = false;
+  }
+
+  function updateDriverPreference(category: string, key: string, value: any) {
+    driverPreferences[category][key] = value;
+    // In a real app, this would save to the server
+  }
+
+  function getDriverStats() {
+    // In a real app, this would fetch from the server
+    return {
+      totalDeliveries: 127,
+      totalEarnings: 2847.50,
+      todaysDeliveries: 8,
+      todaysEarnings: 156.75,
+      rating: 4.8,
+      onTimeRate: 96
+    };
   }
 </script>
 
@@ -494,6 +541,229 @@
               {/if}
             </CardContent>
           </Card>
+
+          <!-- Driver Section (only show for drivers) -->
+          {#if data.userRole.isDriver}
+            <!-- Driver Stats -->
+            <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
+              <CardHeader class="pb-4 sm:pb-6">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                    <Car class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <CardTitle class="text-lg sm:text-xl dark:text-white">Driver Statistics</CardTitle>
+                    <CardDescription class="dark:text-gray-300 text-sm">Your delivery performance and earnings</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {@const stats = getDriverStats()}
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                  <div class="text-center p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                    <Package class="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalDeliveries}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Total Deliveries</p>
+                  </div>
+                  <div class="text-center p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                    <DollarSign class="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">${stats.totalEarnings}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Total Earnings</p>
+                  </div>
+                  <div class="text-center p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                    <Package class="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{stats.todaysDeliveries}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Today's Deliveries</p>
+                  </div>
+                  <div class="text-center p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                    <DollarSign class="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">${stats.todaysEarnings}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Today's Earnings</p>
+                  </div>
+                  <div class="text-center p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                    <div class="w-6 h-6 text-yellow-600 dark:text-yellow-400 mx-auto mb-2 flex items-center justify-center">
+                      <span class="text-lg">★</span>
+                    </div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{stats.rating}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Rating</p>
+                  </div>
+                  <div class="text-center p-4 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                    <Navigation class="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{stats.onTimeRate}%</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">On-Time Rate</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <!-- Driver Preferences -->
+            <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm">
+              <CardHeader class="pb-4 sm:pb-6">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                    <Navigation class="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div>
+                    <CardTitle class="text-lg sm:text-xl dark:text-white">Driver Preferences</CardTitle>
+                    <CardDescription class="dark:text-gray-300 text-sm">Customize your delivery experience</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent class="space-y-6">
+                <!-- Notification Preferences -->
+                <div>
+                  <h4 class="font-medium text-gray-900 dark:text-white mb-4">Notifications</h4>
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">New Orders</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Get notified of new delivery requests</p>
+                      </div>
+                      <Button 
+                        variant={driverPreferences.notifications.newOrders ? "default" : "outline"}
+                        size="sm"
+                        onclick={() => updateDriverPreference('notifications', 'newOrders', !driverPreferences.notifications.newOrders)}
+                        class={driverPreferences.notifications.newOrders ? 'bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700' : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'}
+                      >
+                        {driverPreferences.notifications.newOrders ? 'On' : 'Off'}
+                      </Button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">Order Updates</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Receive updates about order status changes</p>
+                      </div>
+                      <Button 
+                        variant={driverPreferences.notifications.orderUpdates ? "default" : "outline"}
+                        size="sm"
+                        onclick={() => updateDriverPreference('notifications', 'orderUpdates', !driverPreferences.notifications.orderUpdates)}
+                        class={driverPreferences.notifications.orderUpdates ? 'bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700' : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'}
+                      >
+                        {driverPreferences.notifications.orderUpdates ? 'On' : 'Off'}
+                      </Button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">Earnings Updates</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Get notified about your earnings</p>
+                      </div>
+                      <Button 
+                        variant={driverPreferences.notifications.earnings ? "default" : "outline"}
+                        size="sm"
+                        onclick={() => updateDriverPreference('notifications', 'earnings', !driverPreferences.notifications.earnings)}
+                        class={driverPreferences.notifications.earnings ? 'bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700' : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'}
+                      >
+                        {driverPreferences.notifications.earnings ? 'On' : 'Off'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <!-- Navigation Preferences -->
+                <div>
+                  <h4 class="font-medium text-gray-900 dark:text-white mb-4">Navigation</h4>
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">Default Navigation App</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Choose your preferred navigation app</p>
+                      </div>
+                      <select 
+                        bind:value={driverPreferences.navigation.defaultApp}
+                        onchange={(e) => updateDriverPreference('navigation', 'defaultApp', e.target.value)}
+                        class="px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
+                      >
+                        <option value="google">Google Maps</option>
+                        <option value="apple">Apple Maps</option>
+                        <option value="waze">Waze</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">Avoid Tolls</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Prefer routes that avoid toll roads</p>
+                      </div>
+                      <Button 
+                        variant={driverPreferences.navigation.avoidTolls ? "default" : "outline"}
+                        size="sm"
+                        onclick={() => updateDriverPreference('navigation', 'avoidTolls', !driverPreferences.navigation.avoidTolls)}
+                        class={driverPreferences.navigation.avoidTolls ? 'bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700' : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'}
+                      >
+                        {driverPreferences.navigation.avoidTolls ? 'On' : 'Off'}
+                      </Button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">Avoid Highways</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Prefer local roads over highways</p>
+                      </div>
+                      <Button 
+                        variant={driverPreferences.navigation.avoidHighways ? "default" : "outline"}
+                        size="sm"
+                        onclick={() => updateDriverPreference('navigation', 'avoidHighways', !driverPreferences.navigation.avoidHighways)}
+                        class={driverPreferences.navigation.avoidHighways ? 'bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700' : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'}
+                      >
+                        {driverPreferences.navigation.avoidHighways ? 'On' : 'Off'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <!-- Delivery Preferences -->
+                <div>
+                  <h4 class="font-medium text-gray-900 dark:text-white mb-4">Delivery Settings</h4>
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">Auto-Accept Orders</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Automatically accept new orders</p>
+                      </div>
+                      <Button 
+                        variant={driverPreferences.delivery.autoAccept ? "default" : "outline"}
+                        size="sm"
+                        onclick={() => updateDriverPreference('delivery', 'autoAccept', !driverPreferences.delivery.autoAccept)}
+                        class={driverPreferences.delivery.autoAccept ? 'bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700' : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'}
+                      >
+                        {driverPreferences.delivery.autoAccept ? 'On' : 'Off'}
+                      </Button>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">Maximum Distance (miles)</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Maximum delivery distance you're willing to travel</p>
+                      </div>
+                      <input 
+                        type="number"
+                        bind:value={driverPreferences.delivery.maxDistance}
+                        onchange={(e) => updateDriverPreference('delivery', 'maxDistance', parseFloat(e.target.value))}
+                        class="w-20 px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
+                        min="1"
+                        max="50"
+                      />
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">Minimum Order Value ($)</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Minimum order value you'll accept</p>
+                      </div>
+                      <input 
+                        type="number"
+                        bind:value={driverPreferences.delivery.minOrderValue}
+                        onchange={(e) => updateDriverPreference('delivery', 'minOrderValue', parseFloat(e.target.value))}
+                        class="w-20 px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          {/if}
 
           <!-- Danger Zone -->
           <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm border-red-200 dark:border-red-800">

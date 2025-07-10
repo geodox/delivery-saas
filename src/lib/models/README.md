@@ -83,7 +83,7 @@ Represents an employee/team member.
 - `id?: string` - Unique identifier
 - `userId: string` - User ID
 - `businessId: string` - Business ID
-- `role: EmployeeRole` - Employee role
+- `roles: EmployeeRole[]` - Employee roles (array of roles)
 - `status: EmployeeStatus` - Employee status
 - `createdAt?: Date` - Creation timestamp
 - `updatedAt?: Date` - Last update timestamp
@@ -96,6 +96,8 @@ Represents an employee/team member.
 - `isOwner()` - Checks if employee is owner
 - `isDriver()` - Checks if employee is driver
 - `isManager()` - Checks if employee is manager or owner
+- `addRole(role: EmployeeRole)` - Adds a role to the employee
+- `removeRole(role: EmployeeRole)` - Removes a role from the employee
 
 ## SvelteKit Transport
 

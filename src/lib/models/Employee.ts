@@ -1,11 +1,11 @@
-export type EmployeeRole = 'owner' | 'manager' | 'driver' | 'dispatcher';
+export type EmployeeRole = 'owner' | 'driver' | 'dispatcher' | '';
 export type EmployeeStatus = 'active' | 'inactive' | 'suspended';
 
 export class Employee {
   public id?: string;
   public userId: string;
   public businessId: string;
-  public role: EmployeeRole;
+  public roles: EmployeeRole[];
   public status: EmployeeStatus;
   public createdAt?: Date;
   public updatedAt?: Date;
@@ -14,7 +14,7 @@ export class Employee {
     this.id = data.id;
     this.userId = data.userId || '';
     this.businessId = data.businessId || '';
-    this.role = data.role || 'driver';
+    this.roles = data.roles || [''];
     this.status = data.status || 'active';
     this.createdAt = data.createdAt ? new Date(data.createdAt) : new Date();
     this.updatedAt = data.updatedAt ? new Date(data.updatedAt) : new Date();
@@ -34,8 +34,15 @@ export class Employee {
       errors.push('Business ID is required');
     }
 
-    if (!['owner', 'manager', 'driver', 'dispatcher'].includes(this.role)) {
-      errors.push('Invalid role. Must be owner, manager, driver, or dispatcher');
+    if (!this.roles || this.roles.length === 0) {
+      errors.push('At least one role is required');
+    }
+
+    const validRoles = ['owner', 'dispatcher', 'driver'];
+    for (const role of this.roles) {
+      if (!validRoles.includes(role)) {
+        errors.push(`Invalid role: ${role}. Must be one of: ${validRoles.join(', ')}`);
+      }
     }
 
     if (!['active', 'inactive', 'suspended'].includes(this.status)) {
@@ -56,7 +63,7 @@ export class Employee {
       id: this.id,
       userId: this.userId,
       businessId: this.businessId,
-      role: this.role,
+      roles: this.roles,
       status: this.status,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt
@@ -67,7 +74,7 @@ export class Employee {
    * Checks if the employee has a specific role
    */
   public hasRole(role: EmployeeRole): boolean {
-    return this.role === role;
+    return this.roles.includes(role);
   }
 
   /**
@@ -81,20 +88,33 @@ export class Employee {
    * Checks if the employee is an owner
    */
   public isOwner(): boolean {
-    return this.role === 'owner';
+    return this.roles.includes('owner');
   }
 
   /**
    * Checks if the employee is a driver
    */
   public isDriver(): boolean {
-    return this.role === 'driver';
+    return this.roles.includes('driver');
   }
 
   /**
-   * Checks if the employee is a manager or owner
+   * Adds a role to the employee
    */
-  public isManager(): boolean {
-    return this.role === 'manager' || this.role === 'owner';
+  public addRole(role: EmployeeRole): void {
+    if (!this.roles.includes(role)) {
+      this.roles.push(role);
+    }
+  }
+
+  /**
+   * Removes a role from the employee
+   */
+  public removeRole(role: EmployeeRole): void {
+    this.roles = this.roles.filter(r => r !== role);
+    // Ensure at least one role remains
+    if (this.roles.length === 0) {
+      this.roles = ['driver'];
+    }
   }
 } 

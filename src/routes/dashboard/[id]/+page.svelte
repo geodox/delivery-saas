@@ -37,7 +37,7 @@
     },
     {
       title: "Active Drivers",
-      value: data.employees.filter((emp: Employee) => emp.role === 'driver' && emp.status === 'active').length.toString(),
+      value: data.employees.filter((emp: Employee) => emp.roles.includes('driver') && emp.status === 'active').length.toString(),
       change: "+2",
       trend: "up" as const,
       icon: Truck
@@ -77,7 +77,7 @@
 
   // Computed active drivers from actual data
   const activeDrivers = $derived(data.employees
-    .filter((emp: Employee) => emp.role === 'driver' && emp.status === 'active')
+    .filter((emp: Employee) => emp.roles.includes('driver') && emp.status === 'active')
     .map((emp: Employee) => ({
       name: emp.userId, // This would need to be fetched from user data
       status: 'available' as const, // This would need to be tracked separately
@@ -89,18 +89,20 @@
     switch (status) {
       case 'delivered':
         return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
-      case 'out_for_delivery':
+      case 'en_route_delivery':
+        return 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300';
+      case 'picked_up':
+        return 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300';
+      case 'en_route_pickup':
+        return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
+      case 'assigned':
+        return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
+      case 'confirmed':
         return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
       case 'pending':
         return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300';
       case 'cancelled':
         return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300';
-      case 'confirmed':
-        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
-      case 'preparing':
-        return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300';
-      case 'ready':
-        return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
       case 'available':
         return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
       case 'break':

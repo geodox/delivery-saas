@@ -16,5 +16,8 @@ export default defineConfig({
           '**/.jj/**', // Ignore the whole .jj directory
         ],
       },
+      allowedHosts: [
+        'geodox-pc.tail4c5766.ts.net'
+      ]
     }
 });

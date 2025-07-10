@@ -66,11 +66,11 @@
         employee.id.toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesStatus = selectedStatus === "all" || employee.status === selectedStatus;
-      const matchesRole = selectedRole === "all" || employee.role === selectedRole;
+      const matchesRole = selectedRole === "all" || employee.roles.includes(selectedRole);
       
       return matchesSearch && matchesStatus && matchesRole;
     }).sort((a, b) => {
-      if (a.role === "driver") {
+      if (a.roles.includes("driver")) {
         return -1;
       } else {
         return 1;

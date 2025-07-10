@@ -136,7 +136,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       CREATE employee SET 
         userId = type::thing('user', $userId),
         businessId = type::thing('business', $businessId),
-        role = $role,
+        roles = $roles,
         status = $status,
         createdAt = time::now(),
         updatedAt = time::now()
@@ -216,12 +216,12 @@ export const PUT: RequestHandler = async ({ request, locals, url }) => {
     // Update employee record
     const updateResult = await db.query(`
       UPDATE type::thing('employee', $id) SET 
-        role = $role,
+        roles = $roles,
         status = $status,
         updatedAt = time::now()
     `, { 
       id: employeeId,
-      role: employee.role,
+      roles: employee.roles,
       status: employee.status
     }) as any[];
 
@@ -277,15 +277,15 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
 
     // Check if trying to delete the last owner
     const employeeData = await db.query(
-      `SELECT role, businessId FROM employee WHERE id = type::thing('employee', $employeeId)`,
+      `SELECT roles, businessId FROM employee WHERE id = type::thing('employee', $employeeId)`,
       { employeeId }
     ) as any[];
 
     const employeeRecord = employeeData[0]?.[0] as any;
-    if (employeeRecord?.role === 'owner') {
+    if (employeeRecord?.roles && employeeRecord.roles.includes('owner')) {
       const ownerCount = await db.query(
         `SELECT count() as count FROM employee 
-          WHERE businessId = $businessId AND role = 'owner'`,
+          WHERE businessId = $businessId AND array::contains(roles, 'owner')`,
         { businessId: employeeRecord.businessId }
       ) as any[];
 

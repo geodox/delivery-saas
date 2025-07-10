@@ -331,7 +331,7 @@ let employees: Employee[] = [
     },
     licenseNumber: "DL123456789",
     lastActive: "2024-01-15 17:30",
-    role: "driver"
+    roles: ["driver"]
   },
   {
     id: "DRV-002",
@@ -350,7 +350,7 @@ let employees: Employee[] = [
     },
     licenseNumber: "DL987654321",
     lastActive: "2024-01-15 17:25",
-    role: "driver"
+    roles: ["driver"]
   },
   {
     id: "DRV-003",
@@ -369,7 +369,7 @@ let employees: Employee[] = [
     },
     licenseNumber: "DL456789123",
     lastActive: "2024-01-15 17:35",
-    role: "driver"
+    roles: ["driver"]
   },
   {
     id: "DSP-001",
@@ -388,7 +388,7 @@ let employees: Employee[] = [
     },
     licenseNumber: "DL789123456",
     lastActive: "2024-01-15 16:45",
-    role: "dispatcher"
+    roles: ["dispatcher"]
   },
   {
     id: "DRV-004",
@@ -407,7 +407,7 @@ let employees: Employee[] = [
     },
     licenseNumber: "DL321654987",
     lastActive: "2024-01-15 14:20",
-    role: "driver"
+    roles: ["driver"]
   },
   {
     id: "DSP-002",
@@ -426,7 +426,7 @@ let employees: Employee[] = [
     },
     licenseNumber: "DL654987321",
     lastActive: "2024-01-15 17:40",
-    role: "dispatcher"
+    roles: ["dispatcher"]
   }
 ];
 

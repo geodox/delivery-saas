@@ -3,9 +3,10 @@ import { Address } from './Address';
 export type OrderStatus =
   | 'pending'
   | 'confirmed'
-  | 'preparing'
-  | 'ready'
-  | 'out_for_delivery'
+  | 'assigned'
+  | 'en_route_pickup'
+  | 'picked_up'
+  | 'en_route_delivery'
   | 'delivered'
   | 'cancelled';
 
@@ -28,6 +29,7 @@ export class Order {
   updatedAt?: Date;
   confirmedAt?: Date;
   deliveredAt?: Date;
+  deliveryPhoto?: string;
 
   constructor(orderData: Partial<Order> = {}) {
     this.id = orderData.id || '';
@@ -51,6 +53,7 @@ export class Order {
     this.updatedAt = orderData.updatedAt ? new Date(orderData.updatedAt) : new Date();
     this.confirmedAt = orderData.confirmedAt ? new Date(orderData.confirmedAt) : undefined;
     this.deliveredAt = orderData.deliveredAt ? new Date(orderData.deliveredAt) : undefined;
+    this.deliveryPhoto = orderData.deliveryPhoto || undefined;
   }
 
   toJSON() {
@@ -72,7 +75,8 @@ export class Order {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       confirmedAt: this.confirmedAt,
-      deliveredAt: this.deliveredAt
+      deliveredAt: this.deliveredAt,
+      deliveryPhoto: this.deliveryPhoto
     };
   }
 
@@ -126,7 +130,8 @@ export class Order {
       createdAt: new Date(formData.get('createdAt') as string),
       updatedAt: new Date(formData.get('updatedAt') as string),
       confirmedAt: formData.get('confirmedAt') ? new Date(formData.get('confirmedAt') as string) : undefined,
-      deliveredAt: formData.get('deliveredAt') ? new Date(formData.get('deliveredAt') as string) : undefined
+      deliveredAt: formData.get('deliveredAt') ? new Date(formData.get('deliveredAt') as string) : undefined,
+      deliveryPhoto: formData.get('deliveryPhoto') as string
     });
   }
 } 

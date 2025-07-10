@@ -149,7 +149,7 @@ DEFINE TABLE employee SCHEMAFULL
             WHERE $auth.id IN (SELECT ownerId FROM business WHERE id = businessId);
 
 -- Business-specific employee fields
-DEFINE FIELD role ON employee TYPE string ASSERT $value INSIDE ["owner", "dispatcher", "employee"];
+DEFINE FIELD roles ON employee TYPE array ASSERT array::len($value) > 0;
 DEFINE FIELD status ON employee TYPE string ASSERT $value INSIDE ["active", "inactive", "suspended"];
 
 -- Relationships
@@ -163,7 +163,6 @@ DEFINE FIELD updatedAt ON employee TYPE datetime DEFAULT time::now();
 -- Indexes
 DEFINE INDEX businessId ON employee COLUMNS businessId;
 DEFINE INDEX userId ON employee COLUMNS userId;
-DEFINE INDEX role ON employee COLUMNS role;
 DEFINE INDEX status ON employee COLUMNS status;
 
 -- ============================================================================
@@ -189,7 +188,7 @@ DEFINE EVENT order_create ON order
 -- Order basic information
 DEFINE FIELD id ON order TYPE string ASSERT $value != NONE AND $value != "";
 DEFINE FIELD number ON order TYPE int DEFAULT 0;
-DEFINE FIELD status ON order TYPE string ASSERT $value INSIDE ["pending", "confirmed", "preparing", "ready", "out_for_delivery", "delivered", "cancelled"];
+DEFINE FIELD status ON order TYPE string ASSERT $value INSIDE ["pending", "confirmed", "assigned", "en_route_pickup", "picked_up", "en_route_delivery", "delivered", "cancelled"];
 DEFINE FIELD totalAmount ON order TYPE decimal ASSERT $value >= 0;
 
 -- Customer information
@@ -214,13 +213,16 @@ DEFINE FIELD estimatedDeliveryTime ON order TYPE option<datetime>;
 
 -- Relationships
 DEFINE FIELD businessId ON order TYPE record<business> ASSERT $value != NONE;
-DEFINE FIELD assignedDriverId ON order TYPE option<record<user>>;
+DEFINE FIELD assignedDriverId ON order TYPE option<record<employee>>;
 
 -- Timestamps
 DEFINE FIELD createdAt ON order TYPE datetime DEFAULT time::now();
 DEFINE FIELD updatedAt ON order TYPE datetime DEFAULT time::now();
 DEFINE FIELD confirmedAt ON order TYPE option<datetime>;
 DEFINE FIELD deliveredAt ON order TYPE option<datetime>;
+
+-- Delivery verification
+DEFINE FIELD deliveryPhoto ON order TYPE option<string>;
 
 -- Indexes
 DEFINE INDEX businessId ON order COLUMNS businessId;
@@ -266,4 +268,16 @@ DEFINE FUNCTION fn::is_business_open($business_id: record<business>) {
     WHERE operatingHours[$current_day].enabled = true 
     AND $current_time_str >= operatingHours[$current_day].open 
     AND $current_time_str <= operatingHours[$current_day].close;
+};
+
+-- Function to check if employee has a specific role
+DEFINE FUNCTION fn::employee_has_role($employee_id: record<employee>, $role: string) {
+    SELECT array::find(roles, $role) FROM $employee_id;
+};
+
+-- Function to get employees by role
+DEFINE FUNCTION fn::get_employees_by_role($business_id: record<business>, $role: string) {
+    SELECT * FROM employee 
+    WHERE businessId = $business_id 
+    AND array::find(roles, $role);
 };

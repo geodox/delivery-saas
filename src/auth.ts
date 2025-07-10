@@ -28,7 +28,7 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
         session.user.emailVerified = user.emailVerified || null;
       }
       return session;
-    }
+    },
   },
   providers: [
     Google({

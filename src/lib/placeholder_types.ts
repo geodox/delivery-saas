@@ -105,7 +105,7 @@ interface Employee {
   vehicle: Vehicle;
   licenseNumber: string;
   lastActive: string;
-  role: "driver" | "dispatcher";
+  roles: ("owner" | "driver" | "dispatcher")[];
 }
 
 // Status option interface
