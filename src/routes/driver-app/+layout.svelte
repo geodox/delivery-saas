@@ -1,8 +1,8 @@
 <script lang="ts">
   import { browser } from '$app/environment';
+  import { page } from '$app/state';
   import { HeaderNav, IOSInstallPrompt, IOSInstallInstructions } from '$lib/components';
   import { Button } from '$lib/components/ui/button';
-  import { Badge } from '$lib/components/ui/badge';
   import { Card, CardContent } from '$lib/components/ui/card';
   import { 
     isIOS, 
@@ -27,6 +27,50 @@
   let isSafariBrowser = $state(false);
   let showIOSInstallPrompt = $state(false);
   let showIOSInstructions = $state(false);
+  
+  // Get the current section from the URL
+  const currentSection = $derived(() => {
+    const path = page.url.pathname;
+    
+    if (path === '/driver-app') return 'dashboard';
+    if (path.startsWith('/driver-app/orders')) return 'orders';
+    if (path.startsWith('/driver-app/earnings')) return 'earnings';
+    if (path.startsWith('/account')) return 'account';
+    
+    return null;
+  });
+  
+  // Navigation items with their paths and labels
+  const navItems = $derived(() => [
+    { 
+      href: '/driver-app', 
+      label: 'Dashboard',
+      section: 'dashboard'
+    },
+    { 
+      href: '/driver-app/orders', 
+      label: 'Orders',
+      section: 'orders'
+    },
+    { 
+      href: '/driver-app/earnings', 
+      label: 'Earnings',
+      section: 'earnings'
+    },
+    { 
+      href: '/account', 
+      label: 'Account',
+      section: 'account'
+    }
+  ]);
+  
+  // Function to get the appropriate classes for a nav item
+  function getNavItemClasses(itemSection: string) {
+    const isActive = currentSection() === itemSection;
+    return isActive 
+      ? "text-blue-600 dark:text-purple-400 font-medium transition-colors"
+      : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors";
+  }
   
   // Detect iOS and Safari
   function detectPlatform() {
@@ -124,10 +168,15 @@
 <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
   <!-- Header Navigation -->
   <HeaderNav>
-    <a href="/driver-app" role="menuitem" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Dashboard</a>
-    <a href="/driver-app/orders" role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
-    <a href="/driver-app/earnings" role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Earnings</a>
-    <a href="/account" role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Account</a>
+    {#each navItems() as item}
+      <a 
+        href={item.href} 
+        role="menuitem" 
+        class={getNavItemClasses(item.section)}
+      >
+        {item.label}
+      </a>
+    {/each}
   </HeaderNav>
 
   <!-- Android/Chrome PWA Install Prompt -->

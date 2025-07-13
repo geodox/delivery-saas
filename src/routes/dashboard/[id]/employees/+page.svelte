@@ -1,6 +1,5 @@
 <script lang="ts">
   // Components
-  import { HeaderNav, Footer } from "$lib/components";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
@@ -223,238 +222,224 @@
   <title>Employees - DeliveryManager</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
-  <HeaderNav>
-    <a href={`/dashboard/${data.selectedBusiness?.id}`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
-    <a href={`/dashboard/${data.selectedBusiness?.id}/orders`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Orders</a>
-    <a href={`/dashboard/${data.selectedBusiness?.id}/employees`} role="menuitem" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Employees</a>
-    <a href={`/dashboard/${data.selectedBusiness?.id}/tracking`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Live Tracking</a>
-    <a href={`/dashboard/${data.selectedBusiness?.id}/analytics`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Analytics</a>
-  </HeaderNav>
+<div class="container mx-auto px-4">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
+        Employees
+      </h1>
+      <p class="text-gray-600 dark:text-gray-300 mt-2 transition-colors duration-300">
+        Manage your delivery team and track performance
+      </p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0">
+      <Button 
+        onclick={handleInviteEmployee}
+        variant="outline"
+        class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
+      >
+        <Send class="w-4 h-4 mr-2" />
+        Invite Employee
+      </Button>
+    </div>
+  </div>
 
-  <main class="py-8">
-    <div class="container mx-auto px-4">
-      <!-- Page Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
-            Employees
-          </h1>
-          <p class="text-gray-600 dark:text-gray-300 mt-2 transition-colors duration-300">
-            Manage your delivery team and track performance
-          </p>
+  <!-- Filters and Search -->
+  <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300 mb-6">
+    <CardContent class="p-6">
+      <div class="flex flex-col sm:flex-row gap-4">
+        <div class="flex-1">
+          <Label for="search" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+            Search Employees
+          </Label>
+          <div class="relative mt-1">
+            <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
+            <Input
+              id="search"
+              type="text"
+              bind:value={searchQuery}
+              placeholder="Search by name, email, phone, or ID..."
+              class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
+            />
+          </div>
         </div>
-        <div class="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0">
-          <Button 
-            onclick={handleInviteEmployee}
-            variant="outline"
-            class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
+        <div class="sm:w-48">
+          <Label for="status" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+            Filter by Status
+          </Label>
+          <select
+            id="status"
+            bind:value={selectedStatus}
+            class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
           >
-            <Send class="w-4 h-4 mr-2" />
-            Invite Employee
-          </Button>
+            {#each statusOptions as option}
+              <option value={option.value}>{option.label}</option>
+            {/each}
+          </select>
+        </div>
+        <div class="sm:w-48">
+          <Label for="role" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+            Filter by Role
+          </Label>
+          <select
+            id="role"
+            bind:value={selectedRole}
+            class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
+          >
+            {#each filterRoleOptions as option}
+              <option value={option.value}>{option.label}</option>
+            {/each}
+          </select>
         </div>
       </div>
+    </CardContent>
+  </Card>
 
-      <!-- Filters and Search -->
-      <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300 mb-6">
-        <CardContent class="p-6">
-          <div class="flex flex-col sm:flex-row gap-4">
-            <div class="flex-1">
-              <Label for="search" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                Search Employees
-              </Label>
-              <div class="relative mt-1">
-                <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
-                <Input
-                  id="search"
-                  type="text"
-                  bind:value={searchQuery}
-                  placeholder="Search by name, email, phone, or ID..."
-                  class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
-                />
-              </div>
-            </div>
-            <div class="sm:w-48">
-              <Label for="status" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                Filter by Status
-              </Label>
-              <select
-                id="status"
-                bind:value={selectedStatus}
-                class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
-              >
-                {#each statusOptions as option}
-                  <option value={option.value}>{option.label}</option>
-                {/each}
-              </select>
-            </div>
-            <div class="sm:w-48">
-              <Label for="role" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                Filter by Role
-              </Label>
-              <select
-                id="role"
-                bind:value={selectedRole}
-                class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
-              >
-                {#each filterRoleOptions as option}
-                  <option value={option.value}>{option.label}</option>
-                {/each}
-              </select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <!-- Drivers Grid -->
-      <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300">
-        <CardHeader>
-          <CardTitle class="text-xl dark:text-white transition-colors duration-300">
-            All Employees ({filteredEmployees().length})
-          </CardTitle>
-          <CardDescription class="dark:text-gray-300 transition-colors duration-300">
-            Your delivery team overview
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {#each paginatedEmployees() as driver}
-              <div class="bg-white dark:bg-slate-800/90 border border-gray-200 dark:border-slate-600 rounded-xl p-6 hover:shadow-xl dark:hover:shadow-purple-900/20 transition-all duration-300 backdrop-blur-sm">
-                <!-- Header with Avatar and Status -->
-                <div class="flex items-start justify-between mb-6">
-                  <div class="flex items-center space-x-3">
-                    <div class="relative group">
-                      <a href="/dashboard/tracking?driver={driver.id}"
-                        class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 dark:from-purple-500 dark:to-purple-600 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:cursor-pointer"
-                      >
-                        <User class="w-6 h-6 text-white transition-all duration-300 group-hover:opacity-0" />
-                        <MapPin class="w-6 h-6 text-white absolute inset-0 m-auto opacity-0 transition-all duration-300 group-hover:opacity-100" />
-                      </a>
-                      <div class="absolute -bottom-1 -right-1 w-4 h-4 {getStatusDot(driver.status)} rounded-full border-2 border-white dark:border-slate-800"></div>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-gray-900 dark:text-white text-lg">{driver.name}</h3>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">{driver.id}</p>
-                    </div>
-                  </div>
-                  <Badge class="px-2 py-1 text-xs font-medium rounded-full border {getStatusColor(driver.status)}">
-                    {driver.status}
-                  </Badge>
-                </div>
-
-                <!-- Contact Information -->
-                <div class="space-y-3 mb-6">
-                  <div class="flex items-center space-x-3">
-                    <Mail class="w-4 h-4 text-gray-400 dark:text-gray-400 flex-shrink-0" />
-                    <span class="text-sm text-gray-600 dark:text-gray-300 truncate">{driver.email}</span>
-                  </div>
-                  <div class="flex items-center space-x-3">
-                    <Phone class="w-4 h-4 text-gray-400 dark:text-gray-400 flex-shrink-0" />
-                    <span class="text-sm text-gray-600 dark:text-gray-300">{driver.phone}</span>
-                  </div>
-                  <!-- <div class="flex items-center space-x-3">
-                    <MapPin class="w-4 h-4 text-gray-400 dark:text-gray-400 flex-shrink-0" />
-                    <span class="text-sm text-blue-500 dark:text-purple-300"><a href="/tracking?driver={driver.id}">Locate</a></span>
-                  </div> -->
-                </div>
-
-                <!-- Stats -->
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                  <div class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{driver.currentOrders}</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Active Orders</div>
-                  </div>
-                  <div class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{driver.totalDeliveries}</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Total Deliveries</div>
-                  </div>
-                </div>
-
-                <!-- Rating and Last Active -->
-                <div class="flex items-center justify-between mb-6">
-                  <div class="flex items-center space-x-2">
-                    <Star class="w-4 h-4 text-yellow-400 fill-current" />
-                    <span class="text-sm font-medium text-gray-900 dark:text-white">{driver.rating}</span>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <Activity class="w-4 h-4 text-gray-400 dark:text-gray-400" />
-                    <span class="text-xs text-gray-500 dark:text-gray-400">
-                      {formatLastActive(driver.lastActive)}
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onclick={() => handleViewDriver(driver.id)}
-                    class="flex-1 border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
+  <!-- Drivers Grid -->
+  <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300">
+    <CardHeader>
+      <CardTitle class="text-xl dark:text-white transition-colors duration-300">
+        All Employees ({filteredEmployees().length})
+      </CardTitle>
+      <CardDescription class="dark:text-gray-300 transition-colors duration-300">
+        Your delivery team overview
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {#each paginatedEmployees() as driver}
+          <div class="bg-white dark:bg-slate-800/90 border border-gray-200 dark:border-slate-600 rounded-xl p-6 hover:shadow-xl dark:hover:shadow-purple-900/20 transition-all duration-300 backdrop-blur-sm">
+            <!-- Header with Avatar and Status -->
+            <div class="flex items-start justify-between mb-6">
+              <div class="flex items-center space-x-3">
+                <div class="relative group">
+                  <a href="/dashboard/tracking?driver={driver.id}"
+                    class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 dark:from-purple-500 dark:to-purple-600 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:cursor-pointer"
                   >
-                    <Eye class="w-4 h-4 mr-1" />
-                    View
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onclick={() => handleEditDriver(driver.id)}
-                    class="flex-1 border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
-                  >
-                    <Edit class="w-4 h-4 mr-1" />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onclick={() => handleDeleteDriver(driver.id)}
-                    class="hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors duration-300"
-                  >
-                    <Trash2 class="w-4 h-4" />
-                  </Button>
+                    <User class="w-6 h-6 text-white transition-all duration-300 group-hover:opacity-0" />
+                    <MapPin class="w-6 h-6 text-white absolute inset-0 m-auto opacity-0 transition-all duration-300 group-hover:opacity-100" />
+                  </a>
+                  <div class="absolute -bottom-1 -right-1 w-4 h-4 {getStatusDot(driver.status)} rounded-full border-2 border-white dark:border-slate-800"></div>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-900 dark:text-white text-lg">{driver.name}</h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">{driver.id}</p>
                 </div>
               </div>
-            {/each}
-          </div>
+              <Badge class="px-2 py-1 text-xs font-medium rounded-full border {getStatusColor(driver.status)}">
+                {driver.status}
+              </Badge>
+            </div>
 
-          <!-- Pagination -->
-          {#if totalPages() > 1}
-            <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-slate-700">
-              <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredEmployees.length)} of {filteredEmployees.length} employees
-              </p>
+            <!-- Contact Information -->
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center space-x-3">
+                <Mail class="w-4 h-4 text-gray-400 dark:text-gray-400 flex-shrink-0" />
+                <span class="text-sm text-gray-600 dark:text-gray-300 truncate">{driver.email}</span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <Phone class="w-4 h-4 text-gray-400 dark:text-gray-400 flex-shrink-0" />
+                <span class="text-sm text-gray-600 dark:text-gray-300">{driver.phone}</span>
+              </div>
+              <!-- <div class="flex items-center space-x-3">
+                <MapPin class="w-4 h-4 text-gray-400 dark:text-gray-400 flex-shrink-0" />
+                <span class="text-sm text-blue-500 dark:text-purple-300"><a href="/tracking?driver={driver.id}">Locate</a></span>
+              </div> -->
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{driver.currentOrders}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">Active Orders</div>
+              </div>
+              <div class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 text-center">
+                <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{driver.totalDeliveries}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">Total Deliveries</div>
+              </div>
+            </div>
+
+            <!-- Rating and Last Active -->
+            <div class="flex items-center justify-between mb-6">
               <div class="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={currentPage === 1}
-                  onclick={goToPreviousPage}
-                  class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
-                >
-                  <ChevronLeft class="w-4 h-4" />
-                </Button>
-                <span class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                  Page {currentPage} of {totalPages}
+                <Star class="w-4 h-4 text-yellow-400 fill-current" />
+                <span class="text-sm font-medium text-gray-900 dark:text-white">{driver.rating}</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <Activity class="w-4 h-4 text-gray-400 dark:text-gray-400" />
+                <span class="text-xs text-gray-500 dark:text-gray-400">
+                  {formatLastActive(driver.lastActive)}
                 </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={currentPage === totalPages()}
-                  onclick={goToNextPage}
-                  class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
-                >
-                  <ChevronRight class="w-4 h-4" />
-                </Button>
               </div>
             </div>
-          {/if}
-        </CardContent>
-      </Card>
-    </div>
-  </main>
 
-  <Footer />
+            <!-- Action Buttons -->
+            <div class="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onclick={() => handleViewDriver(driver.id)}
+                class="flex-1 border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
+              >
+                <Eye class="w-4 h-4 mr-1" />
+                View
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onclick={() => handleEditDriver(driver.id)}
+                class="flex-1 border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-300"
+              >
+                <Edit class="w-4 h-4 mr-1" />
+                Edit
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onclick={() => handleDeleteDriver(driver.id)}
+                class="hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors duration-300"
+              >
+                <Trash2 class="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        {/each}
+      </div>
+
+      <!-- Pagination -->
+      {#if totalPages() > 1}
+        <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-slate-700">
+          <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
+            Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredEmployees.length)} of {filteredEmployees.length} employees
+          </p>
+          <div class="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === 1}
+              onclick={goToPreviousPage}
+              class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
+            >
+              <ChevronLeft class="w-4 h-4" />
+            </Button>
+            <span class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === totalPages()}
+              onclick={goToNextPage}
+              class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
+            >
+              <ChevronRight class="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      {/if}
+    </CardContent>
+  </Card>
 </div>
 
 <!-- Invite Employee Modal Overlay -->

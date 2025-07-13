@@ -2,7 +2,6 @@
   // Types
   import type { Order } from "$lib/models/Order";
   // Components
-  import { HeaderNav, Footer } from "$lib/components";
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
   import { Button } from "$lib/components/ui/button";
@@ -277,352 +276,338 @@
   <title>Orders - DeliveryManager</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-purple-950/50 dark:via-slate-900 dark:to-purple-950/30 transition-all duration-500">
-  <HeaderNav>
-    <a href={`/dashboard/${data.selectedBusiness?.id}`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Dashboard</a>
-    <a href={`/dashboard/${data.selectedBusiness?.id}/orders`} role="menuitem" class="text-blue-600 dark:text-purple-400 font-medium transition-colors">Orders</a>
-    <a href={`/dashboard/${data.selectedBusiness?.id}/employees`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Employees</a>
-    <a href={`/dashboard/${data.selectedBusiness?.id}/tracking`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Live Tracking</a>
-    <a href={`/dashboard/${data.selectedBusiness?.id}/analytics`} role="menuitem" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Analytics</a>
-  </HeaderNav>
+<div class="container mx-auto px-4">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
+        Orders
+      </h1>
+      <p class="text-gray-600 dark:text-gray-300 mt-2 transition-colors duration-300">
+        Manage and track all your delivery orders
+      </p>
+    </div>
+    <Button 
+      href={`/dashboard/${data.selectedBusiness?.id}/orders/create`}
+      class="mt-4 sm:mt-0 bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
+    >
+      <Plus class="w-4 h-4 mr-2" />
+      Create Order
+    </Button>
+  </div>
 
-  <main class="py-8">
-    <div class="container mx-auto px-4">
-      <!-- Page Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
-            Orders
-          </h1>
-          <p class="text-gray-600 dark:text-gray-300 mt-2 transition-colors duration-300">
-            Manage and track all your delivery orders
-          </p>
+  <!-- Filters and Search -->
+  <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300 mb-6">
+    <CardContent class="p-6">
+      <div class="flex flex-col sm:flex-row gap-4">
+        <div class="flex-1">
+          <Label for="search" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+            Search Orders
+          </Label>
+          <div class="relative mt-1">
+            <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
+            <Input
+              id="search"
+              type="text"
+              bind:value={searchQuery}
+              placeholder="Search by order ID, customer name, or phone..."
+              class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
+            />
+          </div>
         </div>
-        <Button 
-          href={`/dashboard/${data.selectedBusiness?.id}/orders/create`}
-          class="mt-4 sm:mt-0 bg-blue-600 hover:bg-blue-700 dark:bg-purple-600 dark:hover:bg-purple-700 transition-colors duration-300"
-        >
-          <Plus class="w-4 h-4 mr-2" />
-          Create Order
-        </Button>
+        <div class="sm:w-48">
+          <Label for="status" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
+            Filter by Status
+          </Label>
+          <select
+            id="status"
+            bind:value={selectedStatus}
+            class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
+          >
+            {#each statusOptions as option}
+              <option value={option.value}>{option.label}</option>
+            {/each}
+          </select>
+        </div>
       </div>
+    </CardContent>
+  </Card>
 
-      <!-- Filters and Search -->
-      <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300 mb-6">
-        <CardContent class="p-6">
-          <div class="flex flex-col sm:flex-row gap-4">
-            <div class="flex-1">
-              <Label for="search" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                Search Orders
-              </Label>
-              <div class="relative mt-1">
-                <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500 transition-colors duration-300" />
-                <Input
-                  id="search"
-                  type="text"
-                  bind:value={searchQuery}
-                  placeholder="Search by order ID, customer name, or phone..."
-                  class="pl-10 dark:bg-slate-700/50 dark:border-slate-600 dark:text-white dark:placeholder-gray-400 transition-colors duration-300"
-                />
+  <!-- Pending Orders Section -->
+  {#if orders.filter((order: Order) => order.status === 'pending').length > 0}
+    <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300 mb-6">
+      <CardHeader>
+        <CardTitle class="text-xl dark:text-white transition-colors duration-300">
+          Pending Orders ({orders.filter((order: Order) => order.status === 'pending').length})
+        </CardTitle>
+        <CardDescription class="dark:text-gray-300 transition-colors duration-300">
+          Orders waiting for confirmation
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div class="space-y-4">
+          {#each orders.filter((order: Order) => order.status === 'pending') as order}
+            <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+              <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
+                  <Package class="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">Order #{order.number}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">{order.customerName} - {order.customerPhone}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">${order.totalAmount?.toFixed(2) || '0.00'}</p>
+                </div>
               </div>
-            </div>
-            <div class="sm:w-48">
-              <Label for="status" class="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                Filter by Status
-              </Label>
-              <select
-                id="status"
-                bind:value={selectedStatus}
-                class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700/50 text-gray-900 dark:text-white transition-colors duration-300 focus:ring-2 focus:ring-blue-500 dark:focus:ring-purple-500 focus:border-transparent"
-              >
-                {#each statusOptions as option}
-                  <option value={option.value}>{option.label}</option>
-                {/each}
-              </select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <!-- Pending Orders Section -->
-      {#if orders.filter((order: Order) => order.status === 'pending').length > 0}
-        <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300 mb-6">
-          <CardHeader>
-            <CardTitle class="text-xl dark:text-white transition-colors duration-300">
-              Pending Orders ({orders.filter((order: Order) => order.status === 'pending').length})
-            </CardTitle>
-            <CardDescription class="dark:text-gray-300 transition-colors duration-300">
-              Orders waiting for confirmation
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div class="space-y-4">
-              {#each orders.filter((order: Order) => order.status === 'pending') as order}
-                <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                  <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
-                      <Package class="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
-                    </div>
-                    <div>
-                      <p class="font-medium text-gray-900 dark:text-white">Order #{order.number}</p>
-                      <p class="text-sm text-gray-600 dark:text-gray-400">{order.customerName} - {order.customerPhone}</p>
-                      <p class="text-sm text-gray-600 dark:text-gray-400">${order.totalAmount?.toFixed(2) || '0.00'}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <Button
-                      onclick={() => confirmOrder(order.id)}
-                      disabled={isLoading}
-                      class="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white transition-colors duration-300"
-                      size="sm"
-                    >
-                      {#if isLoading}
-                        <svg class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Confirming...
-                      {:else}
-                        Confirm Order
-                      {/if}
-                    </Button>
-                    <Button
-                      onclick={() => cancelOrder(order.id)}
-                      disabled={isLoading}
-                      variant="destructive"
-                      class="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors duration-300"
-                      size="sm"
-                    >
-                      {#if isLoading}
-                        <svg class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Cancelling...
-                      {:else}
-                        Cancel Order
-                      {/if}
-                    </Button>
-                  </div>
-                </div>
-              {/each}
-            </div>
-          </CardContent>
-        </Card>
-      {/if}
-
-      <!-- Confirmed Orders Section -->
-      {#if orders.filter((order: Order) => order.status === 'confirmed').length > 0}
-        <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300 mb-6">
-          <CardHeader>
-            <CardTitle class="text-xl dark:text-white transition-colors duration-300">
-              Confirmed Orders ({orders.filter((order: Order) => order.status === 'confirmed').length})
-            </CardTitle>
-            <CardDescription class="dark:text-gray-300 transition-colors duration-300">
-              Orders ready to be assigned to drivers
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div class="space-y-4">
-              {#each orders.filter((order: Order) => order.status === 'confirmed') as order}
-                <div class="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                      <Package class="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <p class="font-medium text-gray-900 dark:text-white">Order #{order.number}</p>
-                      <p class="text-sm text-gray-600 dark:text-gray-400">{order.customerName} - {order.customerPhone}</p>
-                      <p class="text-sm text-gray-600 dark:text-gray-400">${order.totalAmount?.toFixed(2) || '0.00'}</p>
-                    </div>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <Button
-                      onclick={() => openAssignModal(order)}
-                      disabled={isLoading}
-                      class="bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white transition-colors duration-300"
-                      size="sm"
-                    >
-                      Assign Driver
-                    </Button>
-                    <Button
-                      onclick={() => cancelOrder(order.id)}
-                      disabled={isLoading}
-                      variant="destructive"
-                      class="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors duration-300"
-                      size="sm"
-                    >
-                      {#if isLoading}
-                        <svg class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
-                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Cancelling...
-                      {:else}
-                        Cancel Order
-                      {/if}
-                    </Button>
-                  </div>
-                </div>
-              {/each}
-            </div>
-          </CardContent>
-        </Card>
-      {/if}
-
-      <!-- Orders Table -->
-      <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300">
-        <CardHeader>
-          <CardTitle class="text-xl dark:text-white transition-colors duration-300">
-            All Orders ({filteredOrders().length})
-          </CardTitle>
-          <CardDescription class="dark:text-gray-300 transition-colors duration-300">
-            Complete list of delivery orders
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead>
-                <tr class="border-b border-gray-200 dark:border-slate-700">
-                  <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Order</th>
-                  <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Customer</th>
-                  <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Items</th>
-                  <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Status</th>
-                  <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Driver</th>
-                  <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Amount</th>
-                  <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Time</th>
-                  <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {#each paginatedOrders() as order}
-                  <tr class="border-b border-gray-100 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors duration-200">
-                    <td class="py-4 px-4">
-                      <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 bg-blue-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center transition-colors duration-300">
-                          <Package class="w-4 h-4 text-blue-600 dark:text-purple-400 transition-colors duration-300" />
-                        </div>
-                        <div>
-                          <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">#{order.number}</p>
-                          <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{formatDate(order.createdAt?.toString() || '')}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="py-4 px-4">
-                      <div>
-                        <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">{order.customerName}</p>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{order.customerPhone}</p>
-                      </div>
-                    </td>
-                    <td class="py-4 px-4">
-                      <p class="text-sm text-gray-900 dark:text-white max-w-xs truncate transition-colors duration-300" title={order.orderDetails}>
-                        {order.orderDetails}
-                      </p>
-                      <div class="flex items-center space-x-1 mt-1">
-                        <MapPin class="w-3 h-3 text-gray-400" />
-                        <p class="text-xs text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                          {order.estimatedDeliveryTime ? formatTime(order.estimatedDeliveryTime.toString()) : 'Not set'}
-                        </p>
-                      </div>
-                    </td>
-                    <td class="py-4 px-4">
-                      <Badge class={getStatusColor(order.status)}>
-                        {order.status}
-                      </Badge>
-                    </td>
-                    <td class="py-4 px-4">
-                      {#if order.assignedDriverId}
-                        <div class="flex items-center space-x-2">
-                          <User class="w-4 h-4 text-gray-400" />
-                          <span class="text-sm text-gray-900 dark:text-white transition-colors duration-300">{order.assignedDriverId}</span>
-                        </div>
-                      {:else}
-                        <span class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Unassigned</span>
-                      {/if}
-                    </td>
-                    <td class="py-4 px-4">
-                      <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">${order.totalAmount?.toFixed(2) || '0.00'}</p>
-                    </td>
-                    <td class="py-4 px-4">
-                      <div class="flex items-center space-x-1">
-                        <Clock class="w-3 h-3 text-gray-400" />
-                        <span class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                          {order.deliveredAt ? formatTime(order.deliveredAt.toString()) : "Pending"}
-                        </span>
-                      </div>
-                    </td>
-                    <td class="py-4 px-4">
-                      <div class="flex items-center space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onclick={() => handleViewOrder(order.id)}
-                          class="hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors duration-300"
-                        >
-                          <Eye class="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onclick={() => handleEditOrder(order.id)}
-                          class="hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors duration-300"
-                        >
-                          <Edit class="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onclick={() => handleDeleteOrder(order.id)}
-                          class="hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors duration-300"
-                        >
-                          <Trash2 class="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                {/each}
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Pagination -->
-          {#if totalPages() > 1}
-            <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
-              <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length} orders
-              </p>
               <div class="flex items-center space-x-2">
                 <Button
-                  variant="outline"
+                  onclick={() => confirmOrder(order.id)}
+                  disabled={isLoading}
+                  class="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white transition-colors duration-300"
                   size="sm"
-                  disabled={currentPage === 1}
-                  onclick={goToPreviousPage}
-                  class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
                 >
-                  <ChevronLeft class="w-4 h-4" />
+                  {#if isLoading}
+                    <svg class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Confirming...
+                  {:else}
+                    Confirm Order
+                  {/if}
                 </Button>
-                <span class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
-                  Page {currentPage} of {totalPages}
-                </span>
                 <Button
-                  variant="outline"
+                  onclick={() => cancelOrder(order.id)}
+                  disabled={isLoading}
+                  variant="destructive"
+                  class="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors duration-300"
                   size="sm"
-                  disabled={currentPage === totalPages()}
-                  onclick={goToNextPage}
-                  class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
                 >
-                  <ChevronRight class="w-4 h-4" />
+                  {#if isLoading}
+                    <svg class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Cancelling...
+                  {:else}
+                    Cancel Order
+                  {/if}
                 </Button>
               </div>
             </div>
-          {/if}
-        </CardContent>
-      </Card>
-    </div>
-  </main>
+          {/each}
+        </div>
+      </CardContent>
+    </Card>
+  {/if}
 
-  <Footer />
+  <!-- Confirmed Orders Section -->
+  {#if orders.filter((order: Order) => order.status === 'confirmed').length > 0}
+    <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300 mb-6">
+      <CardHeader>
+        <CardTitle class="text-xl dark:text-white transition-colors duration-300">
+          Confirmed Orders ({orders.filter((order: Order) => order.status === 'confirmed').length})
+        </CardTitle>
+        <CardDescription class="dark:text-gray-300 transition-colors duration-300">
+          Orders ready to be assigned to drivers
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div class="space-y-4">
+          {#each orders.filter((order: Order) => order.status === 'confirmed') as order}
+            <div class="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                  <Package class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">Order #{order.number}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">{order.customerName} - {order.customerPhone}</p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">${order.totalAmount?.toFixed(2) || '0.00'}</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                <Button
+                  onclick={() => openAssignModal(order)}
+                  disabled={isLoading}
+                  class="bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white transition-colors duration-300"
+                  size="sm"
+                >
+                  Assign Driver
+                </Button>
+                <Button
+                  onclick={() => cancelOrder(order.id)}
+                  disabled={isLoading}
+                  variant="destructive"
+                  class="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 transition-colors duration-300"
+                  size="sm"
+                >
+                  {#if isLoading}
+                    <svg class="w-4 h-4 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Cancelling...
+                  {:else}
+                    Cancel Order
+                  {/if}
+                </Button>
+              </div>
+            </div>
+          {/each}
+        </div>
+      </CardContent>
+    </Card>
+  {/if}
+
+  <!-- Orders Table -->
+  <Card class="border-0 shadow-lg dark:bg-slate-800/50 dark:shadow-purple-900/20 backdrop-blur-sm transition-all duration-300">
+    <CardHeader>
+      <CardTitle class="text-xl dark:text-white transition-colors duration-300">
+        All Orders ({filteredOrders().length})
+      </CardTitle>
+      <CardDescription class="dark:text-gray-300 transition-colors duration-300">
+        Complete list of delivery orders
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-200 dark:border-slate-700">
+              <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Order</th>
+              <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Customer</th>
+              <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Items</th>
+              <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Status</th>
+              <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Driver</th>
+              <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Amount</th>
+              <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Time</th>
+              <th class="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each paginatedOrders() as order}
+              <tr class="border-b border-gray-100 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors duration-200">
+                <td class="py-4 px-4">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-blue-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center transition-colors duration-300">
+                      <Package class="w-4 h-4 text-blue-600 dark:text-purple-400 transition-colors duration-300" />
+                    </div>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">#{order.number}</p>
+                      <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{formatDate(order.createdAt?.toString() || '')}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-4">
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">{order.customerName}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">{order.customerPhone}</p>
+                  </div>
+                </td>
+                <td class="py-4 px-4">
+                  <p class="text-sm text-gray-900 dark:text-white max-w-xs truncate transition-colors duration-300" title={order.orderDetails}>
+                    {order.orderDetails}
+                  </p>
+                  <div class="flex items-center space-x-1 mt-1">
+                    <MapPin class="w-3 h-3 text-gray-400" />
+                    <p class="text-xs text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                      {order.estimatedDeliveryTime ? formatTime(order.estimatedDeliveryTime.toString()) : 'Not set'}
+                    </p>
+                  </div>
+                </td>
+                <td class="py-4 px-4">
+                  <Badge class={getStatusColor(order.status)}>
+                    {order.status}
+                  </Badge>
+                </td>
+                <td class="py-4 px-4">
+                  {#if order.assignedDriverId}
+                    <div class="flex items-center space-x-2">
+                      <User class="w-4 h-4 text-gray-400" />
+                      <span class="text-sm text-gray-900 dark:text-white transition-colors duration-300">{order.assignedDriverId}</span>
+                    </div>
+                  {:else}
+                    <span class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Unassigned</span>
+                  {/if}
+                </td>
+                <td class="py-4 px-4">
+                  <p class="font-medium text-gray-900 dark:text-white transition-colors duration-300">${order.totalAmount?.toFixed(2) || '0.00'}</p>
+                </td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center space-x-1">
+                    <Clock class="w-3 h-3 text-gray-400" />
+                    <span class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                      {order.deliveredAt ? formatTime(order.deliveredAt.toString()) : "Pending"}
+                    </span>
+                  </div>
+                </td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onclick={() => handleViewOrder(order.id)}
+                      class="hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors duration-300"
+                    >
+                      <Eye class="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onclick={() => handleEditOrder(order.id)}
+                      class="hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors duration-300"
+                    >
+                      <Edit class="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onclick={() => handleDeleteOrder(order.id)}
+                      class="hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition-colors duration-300"
+                    >
+                      <Trash2 class="w-4 h-4" />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      {#if totalPages() > 1}
+        <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
+          <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
+            Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredOrders.length)} of {filteredOrders.length} orders
+          </p>
+          <div class="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === 1}
+              onclick={goToPreviousPage}
+              class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
+            >
+              <ChevronLeft class="w-4 h-4" />
+            </Button>
+            <span class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-300">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === totalPages()}
+              onclick={goToNextPage}
+              class="border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-300"
+            >
+              <ChevronRight class="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      {/if}
+    </CardContent>
+  </Card>
 
   <!-- Assign Driver Modal -->
   {#if showAssignModal}

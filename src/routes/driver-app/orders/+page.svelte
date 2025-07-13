@@ -323,11 +323,11 @@
           return order;
         });
         
-        activeOrder = data.order;
+        activeOrder = null;
         showDeliveryVerification = false;
         deliveryPhoto = null;
         
-        showNotification('Delivery Confirmed', `Order #${activeOrder?.number} has been delivered successfully!`);
+        showNotification('Delivery Confirmed', `Order #${data.order.number} has been delivered successfully!`);
       } else {
         console.error('Failed to confirm delivery:', data.error);
       }
