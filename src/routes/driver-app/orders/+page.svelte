@@ -8,6 +8,8 @@
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Badge } from '$lib/components/ui/badge';
+  // Utils
+  import { isUserActiveInPWA } from '$lib/utils/pwa';
   
   interface Props {
     data: PageData;
@@ -149,7 +151,14 @@
   }
   
   function showNotification(title: string, body: string) {
+    // Don't show notifications if the user is actively using the PWA
+    if (isUserActiveInPWA()) {
+      console.log('Notification suppressed - user is actively using PWA:', title);
+      return;
+    }
+    
     if (notificationPermission === 'granted') {
+      console.log('Showing notification:', title);
       new Notification(title, {
         body,
         icon: '/favicon.png',
@@ -279,11 +288,51 @@
     if (file) {
       isTakingPhoto = true;
       
-      // Create a FileReader to convert the file to a data URL
+      // Compress the image to lossless WebP at 1200x1200
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Set canvas size to 1200x1200 max while maintaining aspect ratio
+        const maxSize = 1200;
+        let { width, height } = img;
+        
+        // Calculate new dimensions while maintaining aspect ratio
+        if (width > height) {
+          if (width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw the resized image
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        // Convert to lossless WebP
+        const compressedDataUrl = canvas.toDataURL('image/webp', 1.0);
+        deliveryPhoto = compressedDataUrl;
+        isTakingPhoto = false;
+      };
+      
+      img.onerror = () => {
+        console.error('Error loading image for compression');
+        alert('Failed to process photo. Please try again.');
+        isTakingPhoto = false;
+      };
+      
+      // Load the image from the file
       const reader = new FileReader();
       reader.onload = (e) => {
-        deliveryPhoto = e.target?.result as string;
-        isTakingPhoto = false;
+        img.src = e.target?.result as string;
       };
       reader.onerror = () => {
         console.error('Error reading photo file');
@@ -312,7 +361,17 @@
         deliveryPhoto: deliveryPhoto // Include photo if taken
       })
     })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        if (response.status === 413) {
+          throw new Error('Photo file is too large. Please try taking a new photo or skip the photo.');
+        }
+        return response.json().then(data => {
+          throw new Error(data.error || `Server error: ${response.status}`);
+        });
+      }
+      return response.json();
+    })
     .then(data => {
       if (data.success) {
         // Update local state with the updated order
@@ -330,10 +389,12 @@
         showNotification('Delivery Confirmed', `Order #${data.order.number} has been delivered successfully!`);
       } else {
         console.error('Failed to confirm delivery:', data.error);
+        showNotification('Delivery Failed', data.error || 'Failed to confirm delivery');
       }
     })
     .catch(error => {
       console.error('Error confirming delivery:', error);
+      showNotification('Delivery Failed', error.message || 'Error confirming delivery');
     });
   }
 

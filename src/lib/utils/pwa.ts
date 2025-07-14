@@ -47,7 +47,7 @@ export function isStandalone(): boolean {
  */
 export function isFullscreen(): boolean {
   if (typeof window === 'undefined') return false;
-  return window.navigator.standalone === true;
+  return (window.navigator as any).standalone === true;
 }
 
 /**
@@ -163,4 +163,19 @@ export function getNotificationPermission(): NotificationPermission {
   }
   
   return Notification.permission;
+}
+
+/**
+ * Check if the user is actively using the PWA (app is installed and running)
+ * This is used to determine whether to show notifications or not.
+ * 
+ * When a user is actively using the PWA (running in standalone/fullscreen mode),
+ * we suppress browser notifications to avoid interrupting their workflow,
+ * since they're already engaged with the app.
+ */
+export function isUserActiveInPWA(): boolean {
+  if (typeof window === 'undefined') return false;
+  
+  // Check if the app is installed and running in standalone/fullscreen mode
+  return isInstalled();
 } 

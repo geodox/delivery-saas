@@ -1,6 +1,6 @@
 {
-  "name": "Delivery Driver App",
-  "short_name": "Driver App",
+  "name": "DeliverEase Driver App",
+  "short_name": "DeliverEase",
   "description": "Professional delivery management for drivers",
   "start_url": "/driver-app",
   "display": "standalone",

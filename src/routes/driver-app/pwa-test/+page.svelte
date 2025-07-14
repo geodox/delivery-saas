@@ -13,7 +13,8 @@
     supportsPWAInstallation,
     getInstallationMethod,
     hasDismissedIOSPrompt,
-    clearIOSPromptDismissal
+    clearIOSPromptDismissal,
+    isUserActiveInPWA
   } from '$lib/utils/pwa';
   
   let deviceInfo = $state({
@@ -25,7 +26,8 @@
     isFullscreen: false,
     supportsPWA: false,
     installationMethod: 'unsupported' as 'native' | 'ios-manual' | 'unsupported',
-    hasDismissedPrompt: false
+    hasDismissedPrompt: false,
+    isUserActiveInPWA: false
   });
   
   $effect(() => {
@@ -39,7 +41,8 @@
         isFullscreen: isFullscreen(),
         supportsPWA: supportsPWAInstallation(),
         installationMethod: getInstallationMethod(),
-        hasDismissedPrompt: hasDismissedIOSPrompt()
+        hasDismissedPrompt: hasDismissedIOSPrompt(),
+        isUserActiveInPWA: isUserActiveInPWA()
       };
     }
   });
@@ -137,6 +140,35 @@
               </Badge>
             </div>
           {/if}
+        </div>
+      </CardContent>
+    </Card>
+    
+    <!-- Notification Status -->
+    <Card class="mb-8">
+      <CardHeader>
+        <CardTitle>Notification Status</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium">User Active in PWA:</span>
+            <Badge variant={deviceInfo.isUserActiveInPWA ? 'default' : 'secondary'}>
+              {deviceInfo.isUserActiveInPWA ? 'Yes' : 'No'}
+            </Badge>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium">Notifications Status:</span>
+            <Badge variant={deviceInfo.isUserActiveInPWA ? 'destructive' : 'default'}>
+              {deviceInfo.isUserActiveInPWA ? 'Suppressed' : 'Active'}
+            </Badge>
+          </div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">
+            {deviceInfo.isUserActiveInPWA 
+              ? 'Notifications are suppressed because you are actively using the PWA'
+              : 'Notifications are active and will be shown for new orders and updates'
+            }
+          </div>
         </div>
       </CardContent>
     </Card>
