@@ -22,7 +22,8 @@ export const actions: Actions = {
           zipPostalCode: formData.get('deliveryZipPostalCode') as string,
           country: formData.get('deliveryCountry') as string
         },
-        estimatedDeliveryTime: formData.get('estimatedDeliveryTime') ? new Date(formData.get('estimatedDeliveryTime') as string) : undefined
+        estimatedDeliveryTime: formData.get('estimatedDeliveryTime') ? new Date(formData.get('estimatedDeliveryTime') as string) : undefined,
+        status: 'confirmed'
       };
 
       const response = await fetch('/api/orders', {

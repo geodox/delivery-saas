@@ -84,7 +84,7 @@ export const POST: RequestHandler = async ({ request }) => {
     // Create order instance from request data
     const order = new Order({
       ...data,
-      status: 'pending'
+      status: data.status || 'pending'
     });
 
     // Validate order data

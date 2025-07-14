@@ -24,7 +24,7 @@
 </script>
 
 {#if show}
-  <Card class="fixed top-20 left-0 right-0 z-50 mx-4 mt-4 border-purple-200 bg-purple-50 dark:bg-purple-950/50 dark:border-purple-800">
+  <Card class="fixed top-20 left-0 right-0 z-50 mx-4 mt-4 border-purple-200 bg-purple-50 dark:bg-purple-950/75 dark:border-purple-800">
     <CardContent class="p-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">

@@ -25,6 +25,7 @@
   let showDeliveryVerification = $state<boolean>(false);
   let deliveryPhoto = $state<string | null>(null);
   let isTakingPhoto = $state<boolean>(false);
+  let cameraInputRef = $state<HTMLInputElement | null>(null);
   
   $effect(() => {
     if (browser) {
@@ -109,11 +110,23 @@
       
       // Show notifications for new orders
       newlyAddedOrders.forEach(order => {
-        showNotification('New Order Available', `Order #${order.number} is ready for pickup`);
+        switch (order.status) {
+          case 'confirmed':
+            showNotification('New Order Available', `Order #${order.number} is ready for pickup`);
+            break;
+          case 'assigned':
+            showNotification('Order Assigned', `Order #${order.number} has been assigned to you`);
+            break;
+        }
       });
       
       // Show notifications for status changes
       updatedOrders.forEach(order => {
+        // If the active order is cancelled, update the active order to null
+        if (order.id === activeOrder?.id && order.status === 'cancelled') {
+          activeOrder = null;
+        }
+
         const statusMessages: Record<string, string> = {
           'confirmed': 'Order confirmed',
           'assigned': 'Order assigned to driver',
@@ -252,49 +265,36 @@
     }
   }
 
-  async function takeDeliveryPhoto() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      alert('Camera not available on this device');
-      return;
+  function takeDeliveryPhoto() {
+    // Trigger the hidden file input with camera capture
+    if (cameraInputRef) {
+      cameraInputRef.click();
     }
+  }
 
-    isTakingPhoto = true;
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' }, 
-        audio: false 
-      });
+  function handleCameraCapture(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    
+    if (file) {
+      isTakingPhoto = true;
       
-      // Create video element to capture from camera
-      const video = document.createElement('video');
-      video.srcObject = stream;
-      video.play();
-      
-      // Wait for video to be ready
-      await new Promise(resolve => {
-        video.onloadedmetadata = () => resolve(true);
-      });
-      
-      // Create canvas to capture the photo
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      
-      if (ctx) {
-        ctx.drawImage(video, 0, 0);
-        deliveryPhoto = canvas.toDataURL('image/jpeg', 0.8);
-      }
-      
-      // Stop the stream
-      stream.getTracks().forEach(track => track.stop());
-      
-    } catch (error) {
-      console.error('Error taking photo:', error);
-      alert('Failed to take photo. Please try again.');
-    } finally {
-      isTakingPhoto = false;
+      // Create a FileReader to convert the file to a data URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        deliveryPhoto = e.target?.result as string;
+        isTakingPhoto = false;
+      };
+      reader.onerror = () => {
+        console.error('Error reading photo file');
+        alert('Failed to read photo. Please try again.');
+        isTakingPhoto = false;
+      };
+      reader.readAsDataURL(file);
     }
+    
+    // Reset the input so the same file can be selected again
+    target.value = '';
   }
 
   function confirmDelivery() {
@@ -608,6 +608,16 @@
     {/if}
   </div>
 
+  <!-- Hidden Camera Input -->
+  <input
+    bind:this={cameraInputRef}
+    type="file"
+    accept="image/*"
+    capture="environment"
+    onchange={handleCameraCapture}
+    class="hidden"
+  />
+
   <!-- Delivery Verification Modal -->
   {#if showDeliveryVerification}
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -645,7 +655,7 @@
                 <img 
                   src={deliveryPhoto} 
                   alt="Delivery proof" 
-                  class="w-full h-48 object-cover rounded-lg border border-gray-200 dark:border-slate-600"
+                  class="w-full aspect-square object-cover rounded-lg border border-gray-200 dark:border-slate-600"
                 />
                 <Button
                   onclick={() => deliveryPhoto = null}
