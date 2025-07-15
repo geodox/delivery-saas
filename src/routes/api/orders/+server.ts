@@ -274,6 +274,8 @@ export const PATCH: RequestHandler = async ({ request, locals }) => {
     const requestData = await request.json();
     const { action, orderId, status, location, pendingUpdates, deliveryPhoto } = requestData;
     const userId = session.user.id;
+    
+    console.log('PATCH request received:', { action, orderId, hasDeliveryPhoto: !!deliveryPhoto });
 
     let driverId = requestData.driverId;
     if (!driverId) {
@@ -340,6 +342,18 @@ export const PATCH: RequestHandler = async ({ request, locals }) => {
 
     const db = await clientPromise;
 
+    // Test database connection
+    try {
+      await db.query('SELECT 1');
+      console.log('Database connection successful');
+    } catch (dbError) {
+      console.error('Database connection failed:', dbError);
+      return json({
+        error: 'Database connection failed',
+        details: dbError instanceof Error ? dbError.message : 'Unknown database error'
+      }, { status: 503 });
+    }
+
     // Update order based on action
     let updateFields: any = { updatedAt: new Date() };
     
@@ -399,6 +413,9 @@ export const PATCH: RequestHandler = async ({ request, locals }) => {
         updateFields.deliveredAt = new Date();
         // Handle delivery photo if provided
         if (deliveryPhoto) {
+          console.log('Adding delivery photo to update fields');
+          console.log('Delivery photo size (bytes):', deliveryPhoto.length);
+          console.log('Delivery photo size (KB):', Math.round(deliveryPhoto.length / 1024));
           updateFields.deliveryPhoto = deliveryPhoto;
         }
         break;
@@ -420,6 +437,9 @@ export const PATCH: RequestHandler = async ({ request, locals }) => {
     });
     
     const updateQuery = `UPDATE type::thing('order', $id) SET ${updatePairs.join(', ')}`;
+    
+    console.log('Update query:', updateQuery);
+    console.log('Update fields:', Object.keys(updateFields));
     
     const updateResult = await db.query(updateQuery, { 
       id: orderId,
