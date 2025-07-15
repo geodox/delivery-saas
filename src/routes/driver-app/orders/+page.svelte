@@ -318,8 +318,17 @@
         ctx?.drawImage(img, 0, 0, width, height);
         
         // Convert to lossless WebP
-        const compressedDataUrl = canvas.toDataURL('image/webp', 1.0);
-        deliveryPhoto = compressedDataUrl;
+        try {
+          const compressedDataUrl = canvas.toDataURL('image/webp', 1.0);
+          console.log('WebP compression successful, size:', compressedDataUrl.length);
+          deliveryPhoto = compressedDataUrl;
+        } catch (webpError) {
+          console.log('WebP not supported, falling back to JPEG');
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+          console.log('JPEG compression successful, size:', compressedDataUrl.length);
+          deliveryPhoto = compressedDataUrl;
+        }
+        console.log('Photo stored in deliveryPhoto, length:', deliveryPhoto.length);
         isTakingPhoto = false;
       };
       
@@ -348,6 +357,11 @@
 
   function confirmDelivery() {
     if (!activeOrder) return;
+
+    console.log('confirmDelivery called, deliveryPhoto exists:', !!deliveryPhoto);
+    if (deliveryPhoto) {
+      console.log('deliveryPhoto length:', deliveryPhoto.length);
+    }
 
     // Make API call to confirm delivery
     fetch(`/api/orders?id=${activeOrder.id}`, {
