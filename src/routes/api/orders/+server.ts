@@ -342,18 +342,6 @@ export const PATCH: RequestHandler = async ({ request, locals }) => {
 
     const db = await clientPromise;
 
-    // Test database connection
-    try {
-      await db.query('SELECT 1');
-      console.log('Database connection successful');
-    } catch (dbError) {
-      console.error('Database connection failed:', dbError);
-      return json({
-        error: 'Database connection failed',
-        details: dbError instanceof Error ? dbError.message : 'Unknown database error'
-      }, { status: 503 });
-    }
-
     // Update order based on action
     let updateFields: any = { updatedAt: new Date() };
     
